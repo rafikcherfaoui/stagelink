@@ -1,0 +1,22 @@
+# Dependencies
+node_modules/
+
+# Environment variables — never commit secrets
+.env
+.env.local
+.env.*.local
+
+# Build output
+dist/
+build/
+
+# User-uploaded files — runtime data, not source code
+backend/uploads/**
+!backend/uploads/cvs/.gitkeep
+!backend/uploads/profiles/.gitkeep
+
+# OS / editor
+.DS_Store
+Thumbs.db
+.vscode/
+*.log
