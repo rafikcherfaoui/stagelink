@@ -19,11 +19,11 @@ const AdminDashboard = () => {
     const fetchStats = async () => {
       try {
         const [students, teachers, companies, pendingCompanies, pendingOffers] = await Promise.all([
-          axios.get('http://localhost:5000/api/users?role=student', { headers }),
-          axios.get('http://localhost:5000/api/users?role=teacher', { headers }),
-          axios.get('http://localhost:5000/api/companies', { headers }),
-          axios.get('http://localhost:5000/api/companies?status=pending', { headers }),
-          axios.get('http://localhost:5000/api/offers/pending', { headers }),
+          axios.get(`${import.meta.env.VITE_API_URL}/api/users?role=student`, { headers }),
+          axios.get(`${import.meta.env.VITE_API_URL}/api/users?role=teacher`, { headers }),
+          axios.get(`${import.meta.env.VITE_API_URL}/api/companies`, { headers }),
+          axios.get(`${import.meta.env.VITE_API_URL}/api/companies?status=pending`, { headers }),
+          axios.get(`${import.meta.env.VITE_API_URL}/api/offers/pending`, { headers }),
         ])
         setStats({
           students: students.data.length,

@@ -16,7 +16,7 @@ const AdminStudents = () => {
   const [passwords, setPasswords] = useState({})
 
   const fetchStudents = async () => {
-    const res = await axios.get('http://localhost:5000/api/users?role=student', { headers })
+    const res = await axios.get(`${import.meta.env.VITE_API_URL}/api/users?role=student`, { headers })
     setStudents(res.data)
   }
 
@@ -25,7 +25,7 @@ const AdminStudents = () => {
   const handleCreate = async (e) => {
     e.preventDefault()
     try {
-      const res = await axios.post('http://localhost:5000/api/users/create',
+      const res = await axios.post(`${import.meta.env.VITE_API_URL}/api/users/create`,
         { ...form, role: 'student' }, { headers })
       setGeneratedPassword(res.data.temporaryPassword)
       setMessage('')
@@ -38,14 +38,14 @@ const AdminStudents = () => {
   }
 
   const handleBlock = async (id, isActive) => {
-    await axios.put(`http://localhost:5000/api/users/${id}/block`, {}, { headers })
+    await axios.put(`${import.meta.env.VITE_API_URL}/api/users/${id}/block`, {}, { headers })
     setMessage(isActive ? 'Compte bloqué' : 'Compte débloqué')
     fetchStudents()
   }
 
   const handleDelete = async (id) => {
     if (!window.confirm('Confirmer la désactivation ?')) return
-    await axios.delete(`http://localhost:5000/api/users/${id}`, { headers })
+    await axios.delete(`${import.meta.env.VITE_API_URL}/api/users/${id}`, { headers })
     setMessage('Compte désactivé')
     fetchStudents()
   }
@@ -56,7 +56,7 @@ const AdminStudents = () => {
       return
     }
     try {
-      const res = await axios.get(`http://localhost:5000/api/users/${id}/password`, { headers })
+      const res = await axios.get(`${import.meta.env.VITE_API_URL}/api/users/${id}/password`, { headers })
       setPasswords(prev => ({ ...prev, [id]: res.data.tempPassword || res.data.message }))
     } catch {
       setPasswords(prev => ({ ...prev, [id]: 'Erreur' }))

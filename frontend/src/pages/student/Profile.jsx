@@ -29,15 +29,15 @@ const StudentProfile = () => {
       github: user.github || '',
     })
     const fetchMe = async () => {
-      const res = await axios.get('http://localhost:5000/api/users/me', { headers })
+      const res = await axios.get(`${import.meta.env.VITE_API_URL}/api/users/me`, { headers })
       setProfilePicture(res.data.profilePicture || '')
     }
     const fetchLetters = async () => {
-      const res = await axios.get('http://localhost:5000/api/recommendations/my-letters', { headers })
+      const res = await axios.get(`${import.meta.env.VITE_API_URL}/api/recommendations/my-letters`, { headers })
       setLetters(res.data)
     }
     const fetchTeachers = async () => {
-      const res = await axios.get('http://localhost:5000/api/recommendations/teachers', { headers })
+      const res = await axios.get(`${import.meta.env.VITE_API_URL}/api/recommendations/teachers`, { headers })
       setTeachers(res.data)
     }
     fetchMe()
@@ -48,7 +48,7 @@ const StudentProfile = () => {
   const handleUpdateProfile = async (e) => {
     e.preventDefault()
     try {
-      await axios.put('http://localhost:5000/api/users/profile', form, { headers })
+      await axios.put(`${import.meta.env.VITE_API_URL}/api/users/profile`, form, { headers })
       setMessage('Profil mis à jour ✓')
     } catch (err) {
       setMessage(err.response?.data?.message || 'Erreur')
@@ -60,7 +60,7 @@ const StudentProfile = () => {
     const formData = new FormData()
     formData.append('cv', cvFile)
     try {
-      await axios.post('http://localhost:5000/api/users/upload-cv', formData, {
+      await axios.post(`${import.meta.env.VITE_API_URL}/api/users/upload-cv`, formData, {
         headers: { Authorization: `Bearer ${user.token}`, 'Content-Type': 'multipart/form-data' }
       })
       setMessage('CV uploadé avec succès ✓')
@@ -74,7 +74,7 @@ const StudentProfile = () => {
     const formData = new FormData()
     formData.append('picture', pictureFile)
     try {
-      const res = await axios.post('http://localhost:5000/api/users/upload-picture', formData, {
+      const res = await axios.post(`${import.meta.env.VITE_API_URL}/api/users/upload-picture`, formData, {
         headers: { Authorization: `Bearer ${user.token}`, 'Content-Type': 'multipart/form-data' }
       })
       setProfilePicture(res.data.profilePicture)
@@ -91,7 +91,7 @@ const StudentProfile = () => {
       return
     }
     try {
-      await axios.put('http://localhost:5000/api/users/change-password',
+      await axios.put(`${import.meta.env.VITE_API_URL}/api/users/change-password`,
         { oldPassword: passwords.oldPassword, newPassword: passwords.newPassword },
         { headers }
       )
@@ -106,7 +106,7 @@ const StudentProfile = () => {
     if (!selectedTeacher) return
     try {
       await axios.post(
-        `http://localhost:5000/api/recommendations/request/${selectedTeacher}`,
+        `${import.meta.env.VITE_API_URL}/api/recommendations/request/${selectedTeacher}`,
         { message: reqMessage },
         { headers }
       )
@@ -118,7 +118,7 @@ const StudentProfile = () => {
     }
   }
 
-  const avatarUrl = profilePicture ? `http://localhost:5000/${profilePicture}` : null
+  const avatarUrl = profilePicture ? `${import.meta.env.VITE_API_URL}/${profilePicture}` : null
   const initials = form.fullName ? form.fullName.charAt(0).toUpperCase() : '?'
 
   return (

@@ -11,7 +11,7 @@ const StudentApplications = () => {
 
   useEffect(() => {
     const fetch = async () => {
-      const res = await axios.get('http://localhost:5000/api/applications/my-applications', { headers })
+      const res = await axios.get(`${import.meta.env.VITE_API_URL}/api/applications/my-applications`, { headers })
       setApplications(res.data)
     }
     fetch()

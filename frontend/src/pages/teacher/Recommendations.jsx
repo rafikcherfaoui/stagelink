@@ -11,7 +11,7 @@ const TeacherRecommendations = () => {
 
   useEffect(() => {
     const fetch = async () => {
-      const res = await axios.get('http://localhost:5000/api/recommendations/sent', { headers })
+      const res = await axios.get(`${import.meta.env.VITE_API_URL}/api/recommendations/sent`, { headers })
       setLetters(res.data)
     }
     fetch()

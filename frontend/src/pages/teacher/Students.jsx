@@ -15,12 +15,12 @@ const TeacherStudents = () => {
   const [message, setMessage] = useState('')
 
   const fetchStudents = async () => {
-    const res = await axios.get('http://localhost:5000/api/users?role=student', { headers })
+    const res = await axios.get(`${import.meta.env.VITE_API_URL}/api/users?role=student`, { headers })
     setStudents(res.data.filter(s => s.isActive))
   }
 
   const fetchRequests = async () => {
-    const res = await axios.get('http://localhost:5000/api/recommendations/requests', { headers })
+    const res = await axios.get(`${import.meta.env.VITE_API_URL}/api/recommendations/requests`, { headers })
     setRequests(res.data)
   }
 
@@ -36,7 +36,7 @@ const TeacherStudents = () => {
     }
     try {
       await axios.post(
-        `http://localhost:5000/api/recommendations/write/${requestId}`,
+        `${import.meta.env.VITE_API_URL}/api/recommendations/write/${requestId}`,
         { content },
         { headers }
       )
@@ -51,7 +51,7 @@ const TeacherStudents = () => {
 
   const handleIgnore = async (requestId) => {
     await axios.put(
-      `http://localhost:5000/api/recommendations/request/${requestId}/ignore`,
+      `${import.meta.env.VITE_API_URL}/api/recommendations/request/${requestId}/ignore`,
       {},
       { headers }
     )
@@ -100,7 +100,7 @@ const TeacherStudents = () => {
                 <div style={styles.requestActions}>
                   {r.student_id?.cvPath && (
                     <a
-                      href={'http://localhost:5000/' + r.student_id.cvPath}
+                      href={`${import.meta.env.VITE_API_URL}/${r.student_id.cvPath}` }
                       target='_blank'
                       rel='noreferrer'
                       style={styles.btnCV}
@@ -187,7 +187,7 @@ const TeacherStudents = () => {
                   <td style={styles.td}>
                     {s.cvPath ? (
                       <a
-                        href={'http://localhost:5000/' + s.cvPath}
+                        href={`${import.meta.env.VITE_API_URL}/${s.cvPath}` }
                         target='_blank'
                         rel='noreferrer'
                         style={styles.btnCV}

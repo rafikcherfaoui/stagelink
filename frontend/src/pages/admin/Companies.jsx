@@ -12,14 +12,14 @@ const AdminCompanies = () => {
   const [message, setMessage] = useState('')
 
   const fetchCompanies = async () => {
-    const res = await axios.get('http://localhost:5000/api/companies', { headers })
+    const res = await axios.get(`${import.meta.env.VITE_API_URL}/api/companies`, { headers })
     setCompanies(res.data)
   }
 
   useEffect(() => { fetchCompanies() }, [])
 
   const handleStatus = async (id, status) => {
-    await axios.put(`http://localhost:5000/api/companies/${id}/status`, { status }, { headers })
+    await axios.put(`${import.meta.env.VITE_API_URL}/api/companies/${id}/status`, { status }, { headers })
     setMessage(`Entreprise ${status === 'approved' ? 'approuvée' : status === 'rejected' ? 'rejetée' : 'bloquée'} ✓`)
     fetchCompanies()
   }

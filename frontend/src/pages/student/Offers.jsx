@@ -14,7 +14,7 @@ const StudentOffers = () => {
   const [filterLevel, setFilterLevel] = useState('')
 
   const fetchOffers = async () => {
-    let url = 'http://localhost:5000/api/offers'
+    let url = `${import.meta.env.VITE_API_URL}/api/offers`
     const params = []
     if (filterType) params.push(`type=${filterType}`)
     if (filterLevel) params.push(`requiredLevel=${filterLevel}`)
@@ -27,7 +27,7 @@ const StudentOffers = () => {
 
   const handleApply = async (offer_id) => {
     try {
-      await axios.post(`http://localhost:5000/api/applications/${offer_id}`, {}, { headers })
+      await axios.post(`${import.meta.env.VITE_API_URL}/api/applications/${offer_id}`, {}, { headers })
       setMessage('Candidature envoyée avec succès ✓')
     } catch (err) {
       setMessage(err.response?.data?.message || 'Erreur')
@@ -79,7 +79,7 @@ const StudentOffers = () => {
                 </div>
                 {offer.company_id?.profilePicture ? (
                   <img
-                    src={'http://localhost:5000/' + offer.company_id.profilePicture}
+                    src={`${import.meta.env.VITE_API_URL}/${offer.company_id.profilePicture}` }
                     alt={offer.company_id.name}
                     style={{ width: '42px', height: '42px', borderRadius: '10px', objectFit: 'cover' }}
                   />

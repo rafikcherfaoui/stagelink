@@ -24,12 +24,12 @@ const CompanyMyOffers = () => {
   })
 
   const fetchProfile = async () => {
-    const res = await axios.get('http://localhost:5000/api/companies/profile', { headers })
+    const res = await axios.get(`${import.meta.env.VITE_API_URL}/api/companies/profile`, { headers })
     setProfile(res.data)
   }
 
   const fetchOffers = async () => {
-    const res = await axios.get('http://localhost:5000/api/offers/my-offers', { headers })
+    const res = await axios.get(`${import.meta.env.VITE_API_URL}/api/offers/my-offers`, { headers })
     setOffers(res.data)
   }
 
@@ -41,7 +41,7 @@ const CompanyMyOffers = () => {
   const handleSaveProfile = async () => {
     try {
       const { name, sector, address, phone, website, linkedin, description } = profile
-      await axios.put('http://localhost:5000/api/companies/profile',
+      await axios.put(`${import.meta.env.VITE_API_URL}/api/companies/profile`,
         { name, sector, address, phone, website, linkedin, description },
         { headers }
       )
@@ -57,7 +57,7 @@ const CompanyMyOffers = () => {
     const formData = new FormData()
     formData.append('picture', file)
     try {
-      const res = await axios.post('http://localhost:5000/api/companies/upload-picture', formData, {
+      const res = await axios.post(`${import.meta.env.VITE_API_URL}/api/companies/upload-picture`, formData, {
         headers: { Authorization: `Bearer ${user.token}`, 'Content-Type': 'multipart/form-data' }
       })
       setProfile(prev => ({ ...prev, profilePicture: res.data.profilePicture }))
@@ -70,7 +70,7 @@ const CompanyMyOffers = () => {
   const handleCreate = async (e) => {
     e.preventDefault()
     try {
-      await axios.post('http://localhost:5000/api/offers', form, { headers })
+      await axios.post(`${import.meta.env.VITE_API_URL}/api/offers`, form, { headers })
       setMessage('Offre soumise — en attente de validation ✓')
       setForm({ title: '', type: 'stage', description: '', requiredLevel: 'L3', duration: '', location: '' })
       setShowForm(false)
@@ -82,7 +82,7 @@ const CompanyMyOffers = () => {
 
   const handleDelete = async (id) => {
     if (!window.confirm('Supprimer cette offre ?')) return
-    await axios.delete(`http://localhost:5000/api/offers/${id}`, { headers })
+    await axios.delete(`${import.meta.env.VITE_API_URL}/api/offers/${id}`, { headers })
     setMessage('Offre supprimée')
     fetchOffers()
   }
@@ -102,7 +102,7 @@ const CompanyMyOffers = () => {
   }
 
   const initials = profile.name ? profile.name.charAt(0).toUpperCase() : '?'
-  const avatarUrl = profile.profilePicture ? `http://localhost:5000/${profile.profilePicture}` : null
+  const avatarUrl = profile.profilePicture ? `${import.meta.env.VITE_API_URL}/${profile.profilePicture}` : null
 
   return (
     <div>

@@ -16,7 +16,7 @@ const Navbar = () => {
 
   const fetchNotifications = async () => {
     try {
-      const res = await axios.get('http://localhost:5000/api/notifications', {
+      const res = await axios.get(`${import.meta.env.VITE_API_URL}/api/notifications`, {
         headers: { Authorization: `Bearer ${user.token}` }
       })
       setNotifications(res.data)
@@ -43,7 +43,7 @@ const Navbar = () => {
 
   const handleMarkAllRead = async () => {
     try {
-      await axios.put('http://localhost:5000/api/notifications/read-all', {}, {
+      await axios.put(`${import.meta.env.VITE_API_URL}/api/notifications/read-all`, {}, {
         headers: { Authorization: `Bearer ${user.token}` }
       })
       setNotifications(prev => prev.map(n => ({ ...n, isRead: true })))

@@ -5,6 +5,8 @@ node_modules/
 .env
 .env.local
 .env.*.local
+# frontend/.env only has the public Render URL — safe to push
+!frontend/.env
 
 # Build output
 dist/

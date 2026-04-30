@@ -12,14 +12,14 @@ const AdminOffers = () => {
   const [message, setMessage] = useState('')
 
   const fetchOffers = async () => {
-    const res = await axios.get('http://localhost:5000/api/offers/pending', { headers })
+    const res = await axios.get(`${import.meta.env.VITE_API_URL}/api/offers/pending`, { headers })
     setOffers(res.data)
   }
 
   useEffect(() => { fetchOffers() }, [])
 
   const handleStatus = async (id, status) => {
-    await axios.put(`http://localhost:5000/api/offers/${id}/status`, { status }, { headers })
+    await axios.put(`${import.meta.env.VITE_API_URL}/api/offers/${id}/status`, { status }, { headers })
     setMessage(status === 'published' ? 'Offre publiée ✓' : 'Offre rejetée')
     fetchOffers()
   }
@@ -59,7 +59,7 @@ const AdminOffers = () => {
                     <td style={styles.td}>
                       {o.company_id?.profilePicture ? (
                         <img
-                          src={'http://localhost:5000/' + o.company_id.profilePicture}
+                          src={`${import.meta.env.VITE_API_URL}/${o.company_id.profilePicture}` }
                           alt={o.company_id.name}
                           style={{ width: '36px', height: '36px', borderRadius: '8px', objectFit: 'cover' }}
                         />

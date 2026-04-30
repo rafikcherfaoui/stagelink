@@ -23,7 +23,7 @@ const CompanyCandidates = () => {
 
   const fetchApplications = async () => {
     const res = await axios.get(
-      `http://localhost:5000/api/applications/offer/${offer_id}`,
+      `${import.meta.env.VITE_API_URL}/api/applications/offer/${offer_id}`,
       { headers }
     )
     setApplications(res.data)
@@ -33,7 +33,7 @@ const CompanyCandidates = () => {
 
   const fetchLetters = async (studentId, studentName) => {
     const res = await axios.get(
-      'http://localhost:5000/api/recommendations/student/' + studentId,
+      `${import.meta.env.VITE_API_URL}/api/recommendations/student/` + studentId,
       { headers }
     )
     setLetters(res.data)
@@ -44,7 +44,7 @@ const CompanyCandidates = () => {
   const handleUpdateStatus = async (id, status, msg) => {
     try {
       await axios.put(
-        `http://localhost:5000/api/applications/${id}/status`,
+        `${import.meta.env.VITE_API_URL}/api/applications/${id}/status`,
         { status, message: msg },
         { headers }
       )
@@ -115,7 +115,7 @@ const CompanyCandidates = () => {
                 <div style={styles.candidateActions}>
                   {a.student_id?.cvPath && (
                     <a
-                      href={'http://localhost:5000/' + a.student_id.cvPath}
+                      href={`${import.meta.env.VITE_API_URL}/${a.student_id.cvPath}` }
                       target='_blank'
                       rel='noreferrer'
                       style={styles.btnCV}
