@@ -23,7 +23,7 @@ app.use('/uploads', express.static(path.join(__dirname, 'uploads')))
 
 // test route — just to confirm the server is working
 app.get('/', (req, res) => {
-  res.json({ message: 'StageLink API is running' })
+  res.json({ message: 'DahlabConnect API is running' })
 })
 
 // routes 

@@ -43,7 +43,7 @@ const Login = () => {
       <div style={styles.box}>
 
         <div style={styles.brand}>
-          Stage<span style={styles.accent}>Link</span>
+          Dahlab<span style={styles.accent}>Connect</span>
         </div>
         <div style={styles.title}>Connexion</div>
         <div style={styles.subtitle}>Étudiant · Enseignant · Admin</div>

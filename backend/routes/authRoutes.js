@@ -35,7 +35,7 @@ const seedAdmin = asyncHandler(async (req, res) => {
 
   // create the admin user
   const admin = await User.create({
-    fullName: 'Administrateur StageLink',
+    fullName: 'Administrateur DahlabConnect',
     email: 'admin@univ-blida.dz',
     password: hashedPassword,
     role: 'admin'

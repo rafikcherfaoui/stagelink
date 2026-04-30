@@ -85,7 +85,7 @@ const Navbar = () => {
       <div style={styles.left}>
         <img src={logo} alt='USDB' style={styles.logo} />
         <Link to='/' style={styles.brandLink}>
-          Stage<span style={styles.accent}>Link</span>
+          Dahlab<span style={styles.accent}>Connect</span>
         </Link>
       </div>
 

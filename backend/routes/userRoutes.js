@@ -70,7 +70,7 @@ const createUser = asyncHandler(async (req, res) => {
   // fire-and-forget welcome email
   sendEmail({
     to: email,
-    subject: 'Bienvenue sur StageLink — Vos identifiants de connexion',
+    subject: 'Bienvenue sur DahlabConnect — Vos identifiants de connexion',
     html: accountCreatedTemplate(fullName, email, rawPassword, role)
   })
 })

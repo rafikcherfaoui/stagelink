@@ -10,7 +10,7 @@ const Landing = () => {
         <div style={styles.headerLeft}>
           <img src={logo} alt='USDB Logo' style={styles.logo} />
           <div style={styles.brand}>
-            Stage<span style={styles.accent}>Link</span>
+            Dahlab<span style={styles.accent}>Connect</span>
           </div>
         </div>
         <div style={styles.headerRight}>

@@ -143,13 +143,13 @@ const updateApplicationStatus = asyncHandler(async (req, res) => {
       if (status === 'accepted') {
         sendEmail({
           to: student.email,
-          subject: 'Votre candidature a été acceptée — StageLink',
+          subject: 'Votre candidature a été acceptée — DahlabConnect',
           html: applicationAcceptedTemplate(student.fullName, offerTitle, companyName, message)
         })
       } else {
         sendEmail({
           to: student.email,
-          subject: 'Résultat de votre candidature — StageLink',
+          subject: 'Résultat de votre candidature — DahlabConnect',
           html: applicationRejectedTemplate(student.fullName, offerTitle, companyName, message)
         })
       }

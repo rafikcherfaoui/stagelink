@@ -51,7 +51,7 @@ const LoginCompany = () => {
     <div style={styles.container}>
       <div style={styles.box}>
 
-        <div style={styles.brand}>Stage<span style={styles.accent}>Link</span></div>
+        <div style={styles.brand}>Dahlab<span style={styles.accent}>Connect</span></div>
 
         <div style={styles.tabs}>
           <div
