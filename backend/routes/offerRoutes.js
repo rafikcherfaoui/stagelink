@@ -50,7 +50,7 @@ const getPublishedOffers = asyncHandler(async (req, res) => {
 
   // populate company name so student sees who posted the offer
   const offers = await Offer.find(filter)
-    .populate('company_id', 'name sector profilePicture')
+    .populate('company_id', 'name sector profilePicture website linkedin address phone description')
     .sort({ createdAt: -1 })                   // newest first
 
   res.json(offers)

@@ -59,7 +59,7 @@ const AdminOffers = () => {
                     <td style={styles.td}>
                       {o.company_id?.profilePicture ? (
                         <img
-                          src={`${import.meta.env.VITE_API_URL}/${o.company_id.profilePicture}` }
+                          src={o.company_id.profilePicture}
                           alt={o.company_id.name}
                           style={{ width: '36px', height: '36px', borderRadius: '8px', objectFit: 'cover' }}
                         />

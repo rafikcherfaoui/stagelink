@@ -4,8 +4,7 @@ const bcrypt = require('bcryptjs')
 const asyncHandler = require('express-async-handler')
 const User = require('../models/User')
 const { protect, authorizeRoles } = require('../middleware/auth')
-const upload = require('../middleware/upload')
-const { uploadImage } = require('../middleware/upload')
+const { uploadCV, uploadImage } = require('../middleware/upload')
 const { sendEmail, accountCreatedTemplate } = require('../config/email')
 
 // ── generate a random 8 character password ──
@@ -261,7 +260,7 @@ const changePassword = asyncHandler(async (req, res) => {
 // @desc    Student uploads their CV as PDF
 // @access  Private — student only
 // ────────────────────────────────────────────
-const uploadCV = asyncHandler(async (req, res) => {
+const uploadCVHandler = asyncHandler(async (req, res) => {
 
   if (!req.file) {
     return res.status(400).json({ message: 'Aucun fichier reçu' })
@@ -308,7 +307,7 @@ router.get('/',                protect, authorizeRoles('admin'),             get
 router.get('/me',              protect, authorizeRoles('student', 'teacher'), getMe)
 router.put('/profile',         protect, authorizeRoles('student', 'teacher'), updateProfile)
 router.put('/change-password', protect,                                       changePassword)
-router.post('/upload-cv',      protect, authorizeRoles('student'),            upload.single('cv'),      uploadCV)
+router.post('/upload-cv',      protect, authorizeRoles('student'),            uploadCV.single('cv'),    uploadCVHandler)
 router.post('/upload-picture', protect, authorizeRoles('student'),            uploadImage.single('picture'), uploadPicture)
 router.get('/:id/password',    protect, authorizeRoles('admin'),             getUserPassword)
 router.get('/:id',             protect, authorizeRoles('admin', 'teacher'),  getUserById)

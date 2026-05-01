@@ -13,6 +13,9 @@ const StudentOffers = () => {
   const [filterType, setFilterType] = useState('')
   const [filterLevel, setFilterLevel] = useState('')
 
+  const [selectedCompany, setSelectedCompany] = useState(null)
+  const [showCompany, setShowCompany] = useState(false)
+
   const fetchOffers = async () => {
     let url = `${import.meta.env.VITE_API_URL}/api/offers`
     const params = []
@@ -32,6 +35,11 @@ const StudentOffers = () => {
     } catch (err) {
       setMessage(err.response?.data?.message || 'Erreur')
     }
+  }
+
+  const handleViewCompany = (company) => {
+    setSelectedCompany(company)
+    setShowCompany(true)
   }
 
   return (
@@ -73,21 +81,27 @@ const StudentOffers = () => {
           {offers.map(offer => (
             <div key={offer._id} style={styles.card}>
               <div style={styles.cardTop}>
-                <div>
-                  <div style={styles.company}>{offer.company_id?.name}</div>
+                <div style={{ flex: 1, cursor: 'pointer' }}
+                  onClick={() => handleViewCompany(offer.company_id)}>
+                  <div style={{ ...styles.company, textDecoration: 'underline dotted' }}>
+                    {offer.company_id?.name}
+                  </div>
                   <div style={styles.offerTitle}>{offer.title}</div>
                 </div>
-                {offer.company_id?.profilePicture ? (
-                  <img
-                    src={`${import.meta.env.VITE_API_URL}/${offer.company_id.profilePicture}` }
-                    alt={offer.company_id.name}
-                    style={{ width: '42px', height: '42px', borderRadius: '10px', objectFit: 'cover' }}
-                  />
-                ) : (
-                  <div style={styles.companyLogo}>
-                    {offer.company_id?.name?.charAt(0)}
-                  </div>
-                )}
+                <div style={{ cursor: 'pointer' }}
+                  onClick={() => handleViewCompany(offer.company_id)}>
+                  {offer.company_id?.profilePicture ? (
+                    <img
+                      src={offer.company_id.profilePicture}
+                      alt={offer.company_id.name}
+                      style={{ width: '42px', height: '42px', borderRadius: '10px', objectFit: 'cover' }}
+                    />
+                  ) : (
+                    <div style={styles.companyLogo}>
+                      {offer.company_id?.name?.charAt(0)}
+                    </div>
+                  )}
+                </div>
               </div>
               <div style={styles.tags}>
                 <span style={styles.tag}>📍 {offer.location}</span>
@@ -113,6 +127,89 @@ const StudentOffers = () => {
           <div style={styles.empty}>
             <div style={{ fontSize: '36px', marginBottom: '12px' }}>📋</div>
             <div>Aucune offre disponible pour le moment</div>
+          </div>
+        )}
+
+        {/* company profile modal */}
+        {showCompany && selectedCompany && (
+          <div style={styles.overlay} onClick={() => setShowCompany(false)}>
+            <div style={styles.modalBox} onClick={e => e.stopPropagation()}>
+              <button style={styles.closeBtn} onClick={() => setShowCompany(false)}>✕</button>
+
+              <div style={styles.companyHeader}>
+                {selectedCompany.profilePicture ? (
+                  <img
+                    src={selectedCompany.profilePicture}
+                    alt={selectedCompany.name}
+                    style={styles.companyAvatar}
+                  />
+                ) : (
+                  <div style={styles.companyAvatarFallback}>
+                    {selectedCompany.name?.charAt(0).toUpperCase()}
+                  </div>
+                )}
+                <div>
+                  <div style={styles.companyModalName}>{selectedCompany.name}</div>
+                  {selectedCompany.sector && (
+                    <span style={styles.sectorBadge}>{selectedCompany.sector}</span>
+                  )}
+                </div>
+              </div>
+
+              <div style={styles.divider} />
+
+              <div style={styles.infoSection}>
+                {selectedCompany.address && (
+                  <div style={styles.infoRow}>
+                    <div style={styles.infoLabel}>📍 Adresse</div>
+                    <div style={styles.infoValue}>{selectedCompany.address}</div>
+                  </div>
+                )}
+                {selectedCompany.phone && (
+                  <div style={styles.infoRow}>
+                    <div style={styles.infoLabel}>📞 Téléphone</div>
+                    <div style={styles.infoValue}>{selectedCompany.phone}</div>
+                  </div>
+                )}
+                <div style={styles.infoRow}>
+                  <div style={styles.infoLabel}>🏭 Secteur</div>
+                  <div style={styles.infoValue}>{selectedCompany.sector || '—'}</div>
+                </div>
+                {selectedCompany.description && (
+                  <div style={styles.infoRow}>
+                    <div style={styles.infoLabel}>📝 Description</div>
+                    <div style={{ ...styles.infoValue, fontStyle: 'italic' }}>
+                      {selectedCompany.description}
+                    </div>
+                  </div>
+                )}
+              </div>
+
+              {(selectedCompany.website || selectedCompany.linkedin) && (
+                <>
+                  <div style={styles.divider} />
+                  <div style={styles.linksRow}>
+                    {selectedCompany.website && (
+                      <a href={selectedCompany.website} target='_blank' rel='noreferrer'
+                        style={styles.btnWebsite}>
+                        🌐 Site web
+                      </a>
+                    )}
+                    {selectedCompany.linkedin && (
+                      <a href={selectedCompany.linkedin} target='_blank' rel='noreferrer'
+                        style={styles.btnLinkedIn}>
+                        in
+                      </a>
+                    )}
+                  </div>
+                </>
+              )}
+
+              <div style={styles.divider} />
+              <div style={{ textAlign: 'center' }}>
+                <span style={styles.verifiedBadge}>Entreprise vérifiée ✓</span>
+              </div>
+            </div>
           </div>
         )}
       </div>
@@ -143,6 +240,24 @@ const styles = {
   badgePurple: { background: '#f3e8ff', color: '#6b21a8', padding: '3px 10px', borderRadius: '20px', fontSize: '11px', fontWeight: '600' },
   btnApply: { padding: '8px 16px', background: '#1d6bdb', color: '#fff', border: 'none', borderRadius: '8px', fontSize: '13px', fontWeight: '600', cursor: 'pointer', transition: 'background 0.15s' },
   empty: { textAlign: 'center', padding: '48px', color: '#9aa5b4', fontSize: '14px' },
+  // modal
+  overlay: { position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.5)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 300 },
+  modalBox: { background: '#fff', borderRadius: '16px', padding: '32px', width: '100%', maxWidth: '500px', position: 'relative', maxHeight: '90vh', overflowY: 'auto', margin: '0 16px' },
+  closeBtn: { position: 'absolute', top: '16px', right: '16px', background: 'none', border: 'none', fontSize: '18px', cursor: 'pointer', color: '#9aa5b4', lineHeight: 1 },
+  companyHeader: { display: 'flex', alignItems: 'center', gap: '16px', marginBottom: '4px' },
+  companyAvatar: { width: '80px', height: '80px', borderRadius: '50%', objectFit: 'cover', border: '2px solid #e2e8f0', flexShrink: 0 },
+  companyAvatarFallback: { width: '80px', height: '80px', borderRadius: '50%', background: '#1d6bdb', color: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '32px', fontWeight: '700', flexShrink: 0 },
+  companyModalName: { fontSize: '20px', fontWeight: '700', color: '#0f1b2d', marginBottom: '6px' },
+  sectorBadge: { background: '#e8f0fd', color: '#1d6bdb', padding: '3px 10px', borderRadius: '20px', fontSize: '11px', fontWeight: '600' },
+  divider: { height: '1px', background: '#e2e8f0', margin: '16px 0' },
+  infoSection: { display: 'flex', flexDirection: 'column', gap: '12px' },
+  infoRow: {},
+  infoLabel: { fontSize: '11px', fontWeight: '600', color: '#9aa5b4', textTransform: 'uppercase', letterSpacing: '0.5px', marginBottom: '2px' },
+  infoValue: { fontSize: '14px', color: '#0f1b2d', lineHeight: '1.5' },
+  linksRow: { display: 'flex', gap: '10px', alignItems: 'center' },
+  btnWebsite: { padding: '8px 16px', background: '#f5f7fa', color: '#0f1b2d', borderRadius: '8px', fontSize: '13px', fontWeight: '600', textDecoration: 'none', border: '1px solid #e2e8f0' },
+  btnLinkedIn: { width: '36px', height: '36px', background: '#0077b5', color: '#fff', borderRadius: '8px', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '14px', fontWeight: '700', textDecoration: 'none' },
+  verifiedBadge: { background: '#d1fae5', color: '#065f38', padding: '4px 14px', borderRadius: '20px', fontSize: '12px', fontWeight: '600' },
 }
 
 export default StudentOffers

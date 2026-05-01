@@ -118,7 +118,7 @@ const StudentProfile = () => {
     }
   }
 
-  const avatarUrl = profilePicture ? `${import.meta.env.VITE_API_URL}/${profilePicture}` : null
+  const avatarUrl = profilePicture || null
   const initials = form.fullName ? form.fullName.charAt(0).toUpperCase() : '?'
 
   return (

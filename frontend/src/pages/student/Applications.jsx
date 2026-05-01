@@ -11,7 +11,6 @@ const StudentApplications = () => {
 
   const [selectedCompany, setSelectedCompany] = useState(null)
   const [showCompany, setShowCompany] = useState(false)
-  const [loadingCompany, setLoadingCompany] = useState(false)
 
   useEffect(() => {
     const fetch = async () => {
@@ -21,25 +20,9 @@ const StudentApplications = () => {
     fetch()
   }, [])
 
-  const handleViewCompany = async (companyId) => {
-    setLoadingCompany(true)
+  const handleViewCompany = (company) => {
+    setSelectedCompany(company)
     setShowCompany(true)
-    try {
-      const res = await axios.get(
-        `${import.meta.env.VITE_API_URL}/api/companies/${companyId}/public`,
-        { headers }
-      )
-      setSelectedCompany(res.data)
-    } catch (err) {
-      console.log(err)
-    } finally {
-      setLoadingCompany(false)
-    }
-  }
-
-  const closeModal = () => {
-    setShowCompany(false)
-    setSelectedCompany(null)
   }
 
   const statusBadge = (status) => {
@@ -88,7 +71,7 @@ const StudentApplications = () => {
                       {a.offer_id?.company_id ? (
                         <span
                           style={styles.companyLink}
-                          onClick={() => handleViewCompany(a.offer_id.company_id._id)}
+                          onClick={() => handleViewCompany(a.offer_id.company_id)}
                         >
                           {a.offer_id.company_id.name}
                         </span>
@@ -119,92 +102,84 @@ const StudentApplications = () => {
         </div>
 
         {/* company profile modal */}
-        {showCompany && (
-          <div style={styles.overlay} onClick={closeModal}>
+        {showCompany && selectedCompany && (
+          <div style={styles.overlay} onClick={() => setShowCompany(false)}>
             <div style={styles.modalBox} onClick={e => e.stopPropagation()}>
-              <button style={styles.closeBtn} onClick={closeModal}>✕</button>
+              <button style={styles.closeBtn} onClick={() => setShowCompany(false)}>✕</button>
 
-              {loadingCompany ? (
-                <div style={{ textAlign: 'center', padding: '40px', color: '#9aa5b4' }}>
-                  Chargement...
-                </div>
-              ) : selectedCompany ? (
-                <>
-                  <div style={styles.companyHeader}>
-                    {selectedCompany.profilePicture ? (
-                      <img
-                        src={`${import.meta.env.VITE_API_URL}/${selectedCompany.profilePicture}`}
-                        alt={selectedCompany.name}
-                        style={styles.companyAvatar}
-                      />
-                    ) : (
-                      <div style={styles.companyAvatarFallback}>
-                        {selectedCompany.name?.charAt(0).toUpperCase()}
-                      </div>
-                    )}
-                    <div>
-                      <div style={styles.companyModalName}>{selectedCompany.name}</div>
-                      {selectedCompany.sector && (
-                        <span style={styles.sectorBadge}>{selectedCompany.sector}</span>
-                      )}
-                    </div>
+              <div style={styles.companyHeader}>
+                {selectedCompany.profilePicture ? (
+                  <img
+                    src={selectedCompany.profilePicture}
+                    alt={selectedCompany.name}
+                    style={styles.companyAvatar}
+                  />
+                ) : (
+                  <div style={styles.companyAvatarFallback}>
+                    {selectedCompany.name?.charAt(0).toUpperCase()}
                   </div>
-
-                  <div style={styles.divider} />
-
-                  <div style={styles.infoSection}>
-                    {selectedCompany.address && (
-                      <div style={styles.infoRow}>
-                        <div style={styles.infoLabel}>📍 Adresse</div>
-                        <div style={styles.infoValue}>{selectedCompany.address}</div>
-                      </div>
-                    )}
-                    {selectedCompany.phone && (
-                      <div style={styles.infoRow}>
-                        <div style={styles.infoLabel}>📞 Téléphone</div>
-                        <div style={styles.infoValue}>{selectedCompany.phone}</div>
-                      </div>
-                    )}
-                    <div style={styles.infoRow}>
-                      <div style={styles.infoLabel}>🏭 Secteur</div>
-                      <div style={styles.infoValue}>{selectedCompany.sector || '—'}</div>
-                    </div>
-                    {selectedCompany.description && (
-                      <div style={styles.infoRow}>
-                        <div style={styles.infoLabel}>📝 Description</div>
-                        <div style={{ ...styles.infoValue, fontStyle: 'italic' }}>
-                          {selectedCompany.description}
-                        </div>
-                      </div>
-                    )}
-                  </div>
-
-                  {(selectedCompany.website || selectedCompany.linkedin) && (
-                    <>
-                      <div style={styles.divider} />
-                      <div style={styles.linksRow}>
-                        {selectedCompany.website && (
-                          <a href={selectedCompany.website} target='_blank' rel='noreferrer'
-                            style={styles.btnWebsite}>
-                            🌐 Site web
-                          </a>
-                        )}
-                        {selectedCompany.linkedin && (
-                          <a href={selectedCompany.linkedin} target='_blank' rel='noreferrer'
-                            style={styles.btnLinkedIn}>
-                            in
-                          </a>
-                        )}
-                      </div>
-                    </>
+                )}
+                <div>
+                  <div style={styles.companyModalName}>{selectedCompany.name}</div>
+                  {selectedCompany.sector && (
+                    <span style={styles.sectorBadge}>{selectedCompany.sector}</span>
                   )}
+                </div>
+              </div>
 
+              <div style={styles.divider} />
+
+              <div style={styles.infoSection}>
+                {selectedCompany.address && (
+                  <div style={styles.infoRow}>
+                    <div style={styles.infoLabel}>📍 Adresse</div>
+                    <div style={styles.infoValue}>{selectedCompany.address}</div>
+                  </div>
+                )}
+                {selectedCompany.phone && (
+                  <div style={styles.infoRow}>
+                    <div style={styles.infoLabel}>📞 Téléphone</div>
+                    <div style={styles.infoValue}>{selectedCompany.phone}</div>
+                  </div>
+                )}
+                <div style={styles.infoRow}>
+                  <div style={styles.infoLabel}>🏭 Secteur</div>
+                  <div style={styles.infoValue}>{selectedCompany.sector || '—'}</div>
+                </div>
+                {selectedCompany.description && (
+                  <div style={styles.infoRow}>
+                    <div style={styles.infoLabel}>📝 Description</div>
+                    <div style={{ ...styles.infoValue, fontStyle: 'italic' }}>
+                      {selectedCompany.description}
+                    </div>
+                  </div>
+                )}
+              </div>
+
+              {(selectedCompany.website || selectedCompany.linkedin) && (
+                <>
                   <div style={styles.divider} />
-                  <div style={{ textAlign: 'center' }}>
-                    <span style={styles.verifiedBadge}>Entreprise vérifiée ✓</span>
+                  <div style={styles.linksRow}>
+                    {selectedCompany.website && (
+                      <a href={selectedCompany.website} target='_blank' rel='noreferrer'
+                        style={styles.btnWebsite}>
+                        🌐 Site web
+                      </a>
+                    )}
+                    {selectedCompany.linkedin && (
+                      <a href={selectedCompany.linkedin} target='_blank' rel='noreferrer'
+                        style={styles.btnLinkedIn}>
+                        in
+                      </a>
+                    )}
                   </div>
                 </>
-              ) : null}
+              )}
+
+              <div style={styles.divider} />
+              <div style={{ textAlign: 'center' }}>
+                <span style={styles.verifiedBadge}>Entreprise vérifiée ✓</span>
+              </div>
             </div>
           </div>
         )}

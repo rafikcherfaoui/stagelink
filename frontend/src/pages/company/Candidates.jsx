@@ -115,7 +115,7 @@ const CompanyCandidates = () => {
                 <div style={styles.candidateActions}>
                   {a.student_id?.cvPath && (
                     <a
-                      href={`${import.meta.env.VITE_API_URL}/${a.student_id.cvPath}` }
+                      href={a.student_id.cvPath}
                       target='_blank'
                       rel='noreferrer'
                       style={styles.btnCV}

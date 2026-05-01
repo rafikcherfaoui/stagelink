@@ -59,7 +59,11 @@ const applyToOffer = asyncHandler(async (req, res) => {
 const getMyApplications = asyncHandler(async (req, res) => {
 
   const applications = await Application.find({ student_id: req.user.id })
-    .populate('offer_id', 'title type location duration company_id')
+    .populate({
+      path: 'offer_id',
+      select: 'title type location duration company_id',
+      populate: { path: 'company_id', select: 'name sector profilePicture website linkedin address phone description' }
+    })
     .sort({ createdAt: -1 })
 
   res.json(applications)

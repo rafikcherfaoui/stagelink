@@ -102,7 +102,7 @@ const CompanyMyOffers = () => {
   }
 
   const initials = profile.name ? profile.name.charAt(0).toUpperCase() : '?'
-  const avatarUrl = profile.profilePicture ? `${import.meta.env.VITE_API_URL}/${profile.profilePicture}` : null
+  const avatarUrl = profile.profilePicture || null
 
   return (
     <div>

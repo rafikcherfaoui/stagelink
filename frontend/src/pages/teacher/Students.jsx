@@ -100,7 +100,7 @@ const TeacherStudents = () => {
                 <div style={styles.requestActions}>
                   {r.student_id?.cvPath && (
                     <a
-                      href={`${import.meta.env.VITE_API_URL}/${r.student_id.cvPath}` }
+                      href={r.student_id.cvPath}
                       target='_blank'
                       rel='noreferrer'
                       style={styles.btnCV}
@@ -187,7 +187,7 @@ const TeacherStudents = () => {
                   <td style={styles.td}>
                     {s.cvPath ? (
                       <a
-                        href={`${import.meta.env.VITE_API_URL}/${s.cvPath}` }
+                        href={s.cvPath}
                         target='_blank'
                         rel='noreferrer'
                         style={styles.btnCV}
