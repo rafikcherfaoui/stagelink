@@ -25,12 +25,12 @@ const companySchema = new mongoose.Schema({
 
   address: {
     type: String,
-    default: ''
+    required: true
   },
 
   phone: {
     type: String,
-    default: ''
+    required: true
   },
 
   status: {

@@ -37,21 +37,37 @@ const createOffer = asyncHandler(async (req, res) => {
 // ────────────────────────────────────────────
 const getPublishedOffers = asyncHandler(async (req, res) => {
 
-  // optional filters
+  // Base filter: only show published offers
   const filter = { status: 'published' }
 
+  // Optional filters passed as query params (e.g. ?type=stage&requiredLevel=M1)
   if (req.query.type) {
-    filter.type = req.query.type               // filter by stage or emploi
+    filter.type = req.query.type
   }
 
   if (req.query.requiredLevel) {
-    filter.requiredLevel = req.query.requiredLevel  // filter by level
+    filter.requiredLevel = req.query.requiredLevel
   }
 
-  // populate company name so student sees who posted the offer
+  // If the user is a student, hide offers they already applied to.
+  // This keeps the offers page clean — no point showing offers they can't apply to again.
+  if (req.user && req.user.role === 'student') {
+    const Application = require('../models/Application')
+
+    // distinct() returns an array of unique offer_id values for this student
+    const appliedOfferIds = await Application.find({
+      student_id: req.user.id
+    }).distinct('offer_id')
+
+    // $nin = "not in" — exclude any offer whose _id appears in the applied list
+    if (appliedOfferIds.length > 0) {
+      filter._id = { $nin: appliedOfferIds }
+    }
+  }
+
   const offers = await Offer.find(filter)
     .populate('company_id', 'name sector profilePicture website linkedin address phone description')
-    .sort({ createdAt: -1 })                   // newest first
+    .sort({ createdAt: -1 }) // newest first
 
   res.json(offers)
 })

@@ -104,6 +104,22 @@ const uploadCompanyPicture = asyncHandler(async (req, res) => {
 })
 
 // ────────────────────────────────────────────
+// @route   GET /api/companies/:id/public
+// @desc    Any logged-in user views a company's public profile
+// @access  Private — any role
+// ────────────────────────────────────────────
+const getPublicCompanyProfile = asyncHandler(async (req, res) => {
+
+  const company = await Company.findById(req.params.id).select('-password')
+
+  if (!company) {
+    return res.status(404).json({ message: 'Entreprise non trouvée' })
+  }
+
+  res.json(company)
+})
+
+// ────────────────────────────────────────────
 // @route   GET /api/companies/:id
 // @desc    Get one company by id
 // @access  Private — admin only
@@ -158,6 +174,7 @@ router.get('/', protect, authorizeRoles('admin'), getAllCompanies)
 router.get('/profile', protect, authorizeRoles('company'), getCompanyProfile)
 router.put('/profile', protect, authorizeRoles('company'), updateCompanyProfile)
 router.post('/upload-picture', protect, authorizeRoles('company'), uploadImage.single('picture'), uploadCompanyPicture)
+router.get('/:id/public', protect, getPublicCompanyProfile)
 router.get('/:id', protect, authorizeRoles('admin'), getCompanyById)
 router.put('/:id/status', protect, authorizeRoles('admin'), updateCompanyStatus)
 

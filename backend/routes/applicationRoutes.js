@@ -36,9 +36,12 @@ const applyToOffer = asyncHandler(async (req, res) => {
     status: 'pending'
   })
 
-  if (applicationCount >= 3) {
+  // Student can have maximum 5 pending applications at the same time.
+  // Once an application is accepted or rejected it no longer counts,
+  // freeing up a slot for a new application.
+  if (applicationCount >= 5) {
     return res.status(400).json({
-      message: 'Limite atteinte — vous ne pouvez pas avoir plus de 3 candidatures en attente'
+      message: 'Limite atteinte — vous ne pouvez pas avoir plus de 5 candidatures en attente simultanément. Attendez une réponse pour pouvoir postuler à nouveau.'
     })
   }
 
@@ -144,18 +147,19 @@ const updateApplicationStatus = asyncHandler(async (req, res) => {
     })
 
     if (student?.email) {
+      // Send email without blocking — if it fails the status update already succeeded
       if (status === 'accepted') {
         sendEmail({
           to: student.email,
           subject: 'Votre candidature a été acceptée — DahlabConnect',
           html: applicationAcceptedTemplate(student.fullName, offerTitle, companyName, message)
-        })
+        }).catch(err => console.log('Email failed (non-blocking):', err.message))
       } else {
         sendEmail({
           to: student.email,
           subject: 'Résultat de votre candidature — DahlabConnect',
           html: applicationRejectedTemplate(student.fullName, offerTitle, companyName, message)
-        })
+        }).catch(err => console.log('Email failed (non-blocking):', err.message))
       }
     }
   } catch (err) {

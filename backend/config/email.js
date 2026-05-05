@@ -1,24 +1,38 @@
 const nodemailer = require('nodemailer')
 
+// Gmail SMTP transporter with explicit settings to avoid auth issues
 const transporter = nodemailer.createTransport({
   service: 'gmail',
+  host: 'smtp.gmail.com',
+  port: 587,
+  secure: false, // false = STARTTLS (port 587), true = SSL (port 465)
   auth: {
     user: process.env.EMAIL_USER,
-    pass: process.env.EMAIL_PASS
+    pass: process.env.EMAIL_PASS, // must be a Gmail App Password (16 chars, no spaces)
+  },
+  tls: {
+    rejectUnauthorized: false // allows self-signed certs in some environments
   }
 })
 
-const sendEmail = async ({ to, subject, html }) => {
-  try {
-    await transporter.sendMail({
-      from: process.env.EMAIL_FROM,
-      to,
-      subject,
-      html
-    })
-  } catch (error) {
-    console.error('Email sending failed:', error.message)
+// Verify the SMTP connection on startup so any config error is visible immediately
+transporter.verify((error) => {
+  if (error) {
+    console.log('Email service error:', error.message)
+  } else {
+    console.log('Email service is ready')
   }
+})
+
+// sendEmail is always called fire-and-forget (no await at the call sites)
+// If it throws, the calling route has already sent its response — this is safe
+const sendEmail = async ({ to, subject, html }) => {
+  await transporter.sendMail({
+    from: process.env.EMAIL_FROM,
+    to,
+    subject,
+    html
+  })
 }
 
 const applicationAcceptedTemplate = (studentName, offerTitle, companyName, companyMessage) => `

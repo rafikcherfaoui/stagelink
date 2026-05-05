@@ -2,11 +2,15 @@ import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import axios from 'axios'
 import { useAuth } from '../../context/AuthContext'
+import { useTheme } from '../../context/ThemeContext'
+import { lightTheme, darkTheme } from '../../styles/theme'
 import Navbar from '../../components/Navbar'
 
 const AdminDashboard = () => {
 
   const { user } = useAuth()
+  const { isDark } = useTheme()
+  const theme = isDark ? darkTheme : lightTheme
   const navigate = useNavigate()
   const [stats, setStats] = useState({
     students: 0, teachers: 0, companies: 0,
@@ -47,6 +51,18 @@ const AdminDashboard = () => {
     { label: 'Offres en attente', value: stats.pendingOffers, icon: '📋', action: () => navigate('/admin/offers') },
   ]
 
+  const styles = {
+    page: { padding: '32px', fontFamily: 'sans-serif', background: theme.bg, minHeight: '100vh' },
+    pageHeader: { marginBottom: '28px' },
+    pageTitle: { fontSize: '22px', fontWeight: '700', color: theme.text, marginBottom: '4px' },
+    pageSub: { fontSize: '13px', color: theme.text2 },
+    grid: { display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(200px, 1fr))', gap: '16px' },
+    card: { background: theme.card, borderRadius: '12px', padding: '24px', border: `1px solid ${theme.border}`, cursor: 'pointer', transition: 'box-shadow .2s' },
+    cardIcon: { fontSize: '28px', marginBottom: '12px' },
+    cardValue: { fontSize: '32px', fontWeight: '700', color: theme.text, marginBottom: '4px' },
+    cardLabel: { fontSize: '13px', color: '#9aa5b4', fontWeight: '500' },
+  }
+
   return (
     <div>
       <Navbar />
@@ -67,22 +83,6 @@ const AdminDashboard = () => {
       </div>
     </div>
   )
-}
-
-const styles = {
-  page: { padding: '32px', fontFamily: 'sans-serif' },
-  pageHeader: { marginBottom: '28px' },
-  pageTitle: { fontSize: '22px', fontWeight: '700', color: '#0f1b2d', marginBottom: '4px' },
-  pageSub: { fontSize: '13px', color: '#4a5568' },
-  grid: { display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(200px, 1fr))', gap: '16px' },
-  card: {
-    background: '#ffffff', borderRadius: '12px', padding: '24px',
-    border: '1px solid #e2e8f0', cursor: 'pointer',
-    transition: 'box-shadow .2s',
-  },
-  cardIcon: { fontSize: '28px', marginBottom: '12px' },
-  cardValue: { fontSize: '32px', fontWeight: '700', color: '#0f1b2d', marginBottom: '4px' },
-  cardLabel: { fontSize: '13px', color: '#9aa5b4', fontWeight: '500' },
 }
 
 export default AdminDashboard

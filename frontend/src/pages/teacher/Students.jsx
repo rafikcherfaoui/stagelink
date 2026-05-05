@@ -1,11 +1,15 @@
 import { useEffect, useState } from 'react'
 import axios from 'axios'
 import { useAuth } from '../../context/AuthContext'
+import { useTheme } from '../../context/ThemeContext'
+import { lightTheme, darkTheme } from '../../styles/theme'
 import Navbar from '../../components/Navbar'
 
 const TeacherStudents = () => {
 
   const { user } = useAuth()
+  const { isDark } = useTheme()
+  const theme = isDark ? darkTheme : lightTheme
   const headers = { Authorization: `Bearer ${user.token}` }
 
   const [students, setStudents] = useState([])
@@ -57,6 +61,35 @@ const TeacherStudents = () => {
     )
     setMessage('Demande ignorée')
     fetchRequests()
+  }
+
+  const styles = {
+    page: { padding: '32px', fontFamily: 'sans-serif', background: theme.bg, minHeight: '100vh' },
+    pageTitle: { fontSize: '22px', fontWeight: '700', color: theme.text, marginBottom: '24px' },
+    msgSuccess: { background: '#d1fae5', color: '#065f38', padding: '12px', borderRadius: '8px', marginBottom: '16px', fontSize: '13px' },
+    msgError: { background: '#fee2e2', color: '#991b1b', padding: '12px', borderRadius: '8px', marginBottom: '16px', fontSize: '13px' },
+    card: { background: theme.card, borderRadius: '12px', border: `1px solid ${theme.border}`, padding: '24px' },
+    cardTitle: { fontSize: '15px', fontWeight: '700', color: theme.text, marginBottom: '16px', display: 'flex', alignItems: 'center', gap: '10px' },
+    badge: { background: '#fee2e2', color: '#991b1b', padding: '2px 8px', borderRadius: '20px', fontSize: '11px', fontWeight: '700' },
+    empty: { color: '#9aa5b4', fontSize: '13px', textAlign: 'center', padding: '24px' },
+    requestCard: { display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', padding: '16px', background: theme.tableBg, borderRadius: '10px', marginBottom: '12px' },
+    requestInfo: { flex: 1 },
+    requestName: { fontWeight: '600', fontSize: '14px', color: theme.text, marginBottom: '4px' },
+    requestMeta: { fontSize: '12px', color: '#9aa5b4', marginBottom: '6px' },
+    requestMessage: { fontSize: '12px', color: theme.text2, fontStyle: 'italic' },
+    requestActions: { display: 'flex', gap: '8px', alignItems: 'center' },
+    group: { marginBottom: '14px' },
+    label: { display: 'block', fontSize: '12px', fontWeight: '600', color: theme.text2, marginBottom: '6px', textTransform: 'uppercase', letterSpacing: '0.5px' },
+    textarea: { width: '100%', padding: '10px 14px', border: `1.5px solid ${theme.border}`, borderRadius: '8px', fontSize: '14px', fontFamily: 'sans-serif', boxSizing: 'border-box', resize: 'vertical', background: theme.inputBg, color: theme.text },
+    table: { width: '100%', borderCollapse: 'collapse' },
+    th: { padding: '10px 16px', textAlign: 'left', fontSize: '11px', fontWeight: '600', textTransform: 'uppercase', letterSpacing: '0.5px', color: '#9aa5b4', background: theme.tableBg, borderBottom: `1px solid ${theme.border}` },
+    td: { padding: '13px 16px', borderBottom: `1px solid ${theme.border}`, fontSize: '13px', color: theme.text2 },
+    modal: { position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.45)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 200 },
+    modalBox: { background: theme.card, borderRadius: '16px', padding: '32px', width: '100%', maxWidth: '540px' },
+    modalTitle: { fontSize: '17px', fontWeight: '700', color: theme.text, marginBottom: '20px' },
+    btnTeal: { padding: '8px 16px', background: '#0ea5a0', color: '#fff', border: 'none', borderRadius: '8px', fontSize: '13px', fontWeight: '600', cursor: 'pointer', transition: 'background 0.15s' },
+    btnOutline: { padding: '8px 16px', background: 'transparent', border: `1.5px solid ${theme.border}`, borderRadius: '8px', fontSize: '13px', cursor: 'pointer', color: theme.text2, transition: 'background 0.15s' },
+    btnCV: { padding: '6px 12px', background: '#e8f0fd', color: '#1d6bdb', borderRadius: '7px', fontSize: '12px', fontWeight: '600', textDecoration: 'none', transition: 'background 0.15s' },
   }
 
   return (
@@ -118,7 +151,7 @@ const TeacherStudents = () => {
                   </button>
                   <button style={styles.btnOutline}
                     onClick={() => handleIgnore(r._id)}
-                    onMouseEnter={e => e.currentTarget.style.background = '#f1f5f9'}
+                    onMouseEnter={e => e.currentTarget.style.background = isDark ? '#1e2f47' : '#f1f5f9'}
                     onMouseLeave={e => e.currentTarget.style.background = 'transparent'}>
                     Ignorer
                   </button>
@@ -157,7 +190,7 @@ const TeacherStudents = () => {
                 </button>
                 <button style={styles.btnOutline}
                   onClick={() => { setSelectedStudent(null); setContent('') }}
-                  onMouseEnter={e => e.currentTarget.style.background = '#f1f5f9'}
+                  onMouseEnter={e => e.currentTarget.style.background = isDark ? '#1e2f47' : '#f1f5f9'}
                   onMouseLeave={e => e.currentTarget.style.background = 'transparent'}>
                   Annuler
                 </button>
@@ -180,7 +213,7 @@ const TeacherStudents = () => {
             <tbody>
               {students.map(s => (
                 <tr key={s._id}>
-                  <td style={styles.td}><strong>{s.fullName}</strong></td>
+                  <td style={styles.td}><strong style={{ color: theme.text }}>{s.fullName}</strong></td>
                   <td style={styles.td}>{s.email}</td>
                   <td style={styles.td}>{s.level}</td>
                   <td style={styles.td}>{s.speciality}</td>
@@ -207,35 +240,6 @@ const TeacherStudents = () => {
       </div>
     </div>
   )
-}
-
-const styles = {
-  page: { padding: '32px', fontFamily: 'sans-serif' },
-  pageTitle: { fontSize: '22px', fontWeight: '700', color: '#0f1b2d', marginBottom: '24px' },
-  msgSuccess: { background: '#d1fae5', color: '#065f38', padding: '12px', borderRadius: '8px', marginBottom: '16px', fontSize: '13px' },
-  msgError: { background: '#fee2e2', color: '#991b1b', padding: '12px', borderRadius: '8px', marginBottom: '16px', fontSize: '13px' },
-  card: { background: '#fff', borderRadius: '12px', border: '1px solid #e2e8f0', padding: '24px' },
-  cardTitle: { fontSize: '15px', fontWeight: '700', color: '#0f1b2d', marginBottom: '16px', display: 'flex', alignItems: 'center', gap: '10px' },
-  badge: { background: '#fee2e2', color: '#991b1b', padding: '2px 8px', borderRadius: '20px', fontSize: '11px', fontWeight: '700' },
-  empty: { color: '#9aa5b4', fontSize: '13px', textAlign: 'center', padding: '24px' },
-  requestCard: { display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', padding: '16px', background: '#f5f7fa', borderRadius: '10px', marginBottom: '12px' },
-  requestInfo: { flex: 1 },
-  requestName: { fontWeight: '600', fontSize: '14px', color: '#0f1b2d', marginBottom: '4px' },
-  requestMeta: { fontSize: '12px', color: '#9aa5b4', marginBottom: '6px' },
-  requestMessage: { fontSize: '12px', color: '#4a5568', fontStyle: 'italic' },
-  requestActions: { display: 'flex', gap: '8px', alignItems: 'center' },
-  group: { marginBottom: '14px' },
-  label: { display: 'block', fontSize: '12px', fontWeight: '600', color: '#4a5568', marginBottom: '6px', textTransform: 'uppercase', letterSpacing: '0.5px' },
-  textarea: { width: '100%', padding: '10px 14px', border: '1.5px solid #e2e8f0', borderRadius: '8px', fontSize: '14px', fontFamily: 'sans-serif', boxSizing: 'border-box', resize: 'vertical' },
-  table: { width: '100%', borderCollapse: 'collapse' },
-  th: { padding: '10px 16px', textAlign: 'left', fontSize: '11px', fontWeight: '600', textTransform: 'uppercase', letterSpacing: '0.5px', color: '#9aa5b4', background: '#f5f7fa', borderBottom: '1px solid #e2e8f0' },
-  td: { padding: '13px 16px', borderBottom: '1px solid #e2e8f0', fontSize: '13px', color: '#4a5568' },
-  modal: { position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.45)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 200 },
-  modalBox: { background: '#fff', borderRadius: '16px', padding: '32px', width: '100%', maxWidth: '540px' },
-  modalTitle: { fontSize: '17px', fontWeight: '700', color: '#0f1b2d', marginBottom: '20px' },
-  btnTeal: { padding: '8px 16px', background: '#0ea5a0', color: '#fff', border: 'none', borderRadius: '8px', fontSize: '13px', fontWeight: '600', cursor: 'pointer', transition: 'background 0.15s' },
-  btnOutline: { padding: '8px 16px', background: 'transparent', border: '1.5px solid #e2e8f0', borderRadius: '8px', fontSize: '13px', cursor: 'pointer', color: '#4a5568', transition: 'background 0.15s' },
-  btnCV: { padding: '6px 12px', background: '#e8f0fd', color: '#1d6bdb', borderRadius: '7px', fontSize: '12px', fontWeight: '600', textDecoration: 'none', transition: 'background 0.15s' },
 }
 
 export default TeacherStudents

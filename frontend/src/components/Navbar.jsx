@@ -2,11 +2,15 @@ import { Link, useNavigate } from 'react-router-dom'
 import { useState, useEffect, useRef } from 'react'
 import axios from 'axios'
 import { useAuth } from '../context/AuthContext'
+import { useTheme } from '../context/ThemeContext'
+import { lightTheme, darkTheme } from '../styles/theme'
 import logo from '../assets/usdb_logo.png'
 
 const Navbar = () => {
 
   const { user, logout } = useAuth()
+  const { isDark, toggleTheme } = useTheme()
+  const theme = isDark ? darkTheme : lightTheme
   const navigate = useNavigate()
   const bellRef = useRef(null)
 
@@ -80,6 +84,37 @@ const Navbar = () => {
 
   const userLinks = user ? links[user.role] || [] : []
 
+  // Styles are computed inside the component so they react to theme changes
+  const styles = {
+    nav: {
+      display: 'flex', alignItems: 'center', padding: '0 32px', height: '56px',
+      background: theme.navBg, borderBottom: `1px solid ${theme.border}`,
+      position: 'sticky', top: 0, zIndex: 100,
+    },
+    left: { display: 'flex', alignItems: 'center', gap: '10px', marginRight: '24px' },
+    logo: { width: '32px', height: '32px', objectFit: 'contain' },
+    brandLink: { fontSize: '20px', fontWeight: '800', color: theme.text, textDecoration: 'none' },
+    accent: { color: '#0ea5a0' },
+    links: { display: 'flex', gap: '4px', flex: 1 },
+    link: { padding: '7px 14px', borderRadius: '7px', fontSize: '13px', color: theme.text2, textDecoration: 'none' },
+    right: { display: 'flex', alignItems: 'center', gap: '12px' },
+    username: { fontSize: '13px', fontWeight: '600', color: theme.text },
+    role: { fontSize: '11px', padding: '3px 10px', borderRadius: '20px', background: '#e8f0fd', color: '#1d6bdb', fontWeight: '600', textTransform: 'uppercase' },
+    logoutBtn: { padding: '7px 14px', borderRadius: '7px', border: `1.5px solid ${theme.border}`, background: 'transparent', fontSize: '13px', cursor: 'pointer', color: theme.text2, transition: 'background 0.15s' },
+    // Moon/sun toggle button
+    themeBtn: { padding: '6px 10px', borderRadius: '7px', border: `1.5px solid ${theme.border}`, background: 'transparent', fontSize: '16px', cursor: 'pointer', lineHeight: 1 },
+    bellBtn: { position: 'relative', background: 'none', border: 'none', cursor: 'pointer', fontSize: '18px', padding: '6px 8px', borderRadius: '8px', lineHeight: 1 },
+    badge: { position: 'absolute', top: '2px', right: '2px', background: '#ef4444', color: '#fff', borderRadius: '50%', width: '16px', height: '16px', fontSize: '10px', fontWeight: '700', display: 'flex', alignItems: 'center', justifyContent: 'center' },
+    dropdown: { position: 'absolute', right: 0, top: 'calc(100% + 8px)', width: '320px', background: theme.card, border: `1px solid ${theme.border}`, borderRadius: '12px', boxShadow: '0 8px 32px rgba(0,0,0,0.12)', zIndex: 200, maxHeight: '400px', overflowY: 'auto' },
+    dropdownHeader: { display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '12px 16px', borderBottom: `1px solid ${theme.border}`, position: 'sticky', top: 0, background: theme.card },
+    markAllBtn: { background: 'none', border: 'none', color: '#1d6bdb', fontSize: '12px', cursor: 'pointer', fontWeight: '600', padding: 0 },
+    noNotif: { padding: '28px', textAlign: 'center', color: '#9aa5b4', fontSize: '13px' },
+    notifMsg: { fontSize: '13px', color: theme.text2, lineHeight: '1.4', marginBottom: '4px' },
+    notifDate: { fontSize: '11px', color: '#9aa5b4' },
+    badgeAccepted: { background: '#d1fae5', color: '#065f38', padding: '2px 8px', borderRadius: '20px', fontSize: '11px', fontWeight: '600' },
+    badgeRejected: { background: '#fee2e2', color: '#991b1b', padding: '2px 8px', borderRadius: '20px', fontSize: '11px', fontWeight: '600' },
+  }
+
   return (
     <nav style={styles.nav}>
       <div style={styles.left}>
@@ -112,7 +147,7 @@ const Navbar = () => {
                 {showDropdown && (
                   <div style={styles.dropdown}>
                     <div style={styles.dropdownHeader}>
-                      <span style={{ fontWeight: '700', fontSize: '13px', color: '#0f1b2d' }}>
+                      <span style={{ fontWeight: '700', fontSize: '13px', color: theme.text }}>
                         Notifications
                       </span>
                       {unreadCount > 0 && (
@@ -126,7 +161,7 @@ const Navbar = () => {
                       <div style={styles.noNotif}>Aucune notification</div>
                     ) : (
                       notifications.map(n => (
-                        <div key={n._id} style={{ ...styles.notifItem, background: n.isRead ? '#fff' : '#f0f7ff' }}>
+                        <div key={n._id} style={{ padding: '12px 16px', borderBottom: `1px solid ${theme.border}`, background: n.isRead ? theme.card : (isDark ? '#1e2f47' : '#f0f7ff') }}>
                           <div style={{ marginBottom: '4px' }}>
                             <span style={n.type === 'accepted' ? styles.badgeAccepted : styles.badgeRejected}>
                               {n.type === 'accepted' ? 'Acceptée' : 'Refusée'}
@@ -146,8 +181,14 @@ const Navbar = () => {
 
             <span style={styles.username}>{user.fullName || user.name}</span>
             <span style={styles.role}>{user.role}</span>
+
+            {/* Theme toggle — moon = switch to dark, sun = switch to light */}
+            <button onClick={toggleTheme} style={styles.themeBtn} title={isDark ? 'Mode clair' : 'Mode sombre'}>
+              {isDark ? '☀️' : '🌙'}
+            </button>
+
             <button onClick={handleLogout} style={styles.logoutBtn}
-              onMouseEnter={e => e.currentTarget.style.background = '#f1f5f9'}
+              onMouseEnter={e => e.currentTarget.style.background = isDark ? '#1e2f47' : '#f1f5f9'}
               onMouseLeave={e => e.currentTarget.style.background = 'transparent'}>
               Déconnexion
             </button>
@@ -158,160 +199,6 @@ const Navbar = () => {
       </div>
     </nav>
   )
-}
-
-const styles = {
-  nav: {
-    display: 'flex',
-    alignItems: 'center',
-    padding: '0 32px',
-    height: '56px',
-    background: '#ffffff',
-    borderBottom: '1px solid #e2e8f0',
-    position: 'sticky',
-    top: 0,
-    zIndex: 100,
-  },
-  left: {
-    display: 'flex',
-    alignItems: 'center',
-    gap: '10px',
-    marginRight: '24px',
-  },
-  logo: {
-    width: '32px',
-    height: '32px',
-    objectFit: 'contain',
-  },
-  brandLink: {
-    fontSize: '20px',
-    fontWeight: '800',
-    color: '#0f1b2d',
-    textDecoration: 'none',
-  },
-  accent: { color: '#0ea5a0' },
-  links: { display: 'flex', gap: '4px', flex: 1 },
-  link: {
-    padding: '7px 14px',
-    borderRadius: '7px',
-    fontSize: '13px',
-    color: '#4a5568',
-    textDecoration: 'none',
-  },
-  right: { display: 'flex', alignItems: 'center', gap: '12px' },
-  username: { fontSize: '13px', fontWeight: '600', color: '#0f1b2d' },
-  role: {
-    fontSize: '11px',
-    padding: '3px 10px',
-    borderRadius: '20px',
-    background: '#e8f0fd',
-    color: '#1d6bdb',
-    fontWeight: '600',
-    textTransform: 'uppercase',
-  },
-  logoutBtn: {
-    padding: '7px 14px',
-    borderRadius: '7px',
-    border: '1.5px solid #e2e8f0',
-    background: 'transparent',
-    fontSize: '13px',
-    cursor: 'pointer',
-    color: '#4a5568',
-    transition: 'background 0.15s',
-  },
-  bellBtn: {
-    position: 'relative',
-    background: 'none',
-    border: 'none',
-    cursor: 'pointer',
-    fontSize: '18px',
-    padding: '6px 8px',
-    borderRadius: '8px',
-    lineHeight: 1,
-  },
-  badge: {
-    position: 'absolute',
-    top: '2px',
-    right: '2px',
-    background: '#ef4444',
-    color: '#fff',
-    borderRadius: '50%',
-    width: '16px',
-    height: '16px',
-    fontSize: '10px',
-    fontWeight: '700',
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  dropdown: {
-    position: 'absolute',
-    right: 0,
-    top: 'calc(100% + 8px)',
-    width: '320px',
-    background: '#fff',
-    border: '1px solid #e2e8f0',
-    borderRadius: '12px',
-    boxShadow: '0 8px 32px rgba(0,0,0,0.12)',
-    zIndex: 200,
-    maxHeight: '400px',
-    overflowY: 'auto',
-  },
-  dropdownHeader: {
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    padding: '12px 16px',
-    borderBottom: '1px solid #e2e8f0',
-    position: 'sticky',
-    top: 0,
-    background: '#fff',
-  },
-  markAllBtn: {
-    background: 'none',
-    border: 'none',
-    color: '#1d6bdb',
-    fontSize: '12px',
-    cursor: 'pointer',
-    fontWeight: '600',
-    padding: 0,
-  },
-  noNotif: {
-    padding: '28px',
-    textAlign: 'center',
-    color: '#9aa5b4',
-    fontSize: '13px',
-  },
-  notifItem: {
-    padding: '12px 16px',
-    borderBottom: '1px solid #f1f5f9',
-  },
-  notifMsg: {
-    fontSize: '13px',
-    color: '#4a5568',
-    lineHeight: '1.4',
-    marginBottom: '4px',
-  },
-  notifDate: {
-    fontSize: '11px',
-    color: '#9aa5b4',
-  },
-  badgeAccepted: {
-    background: '#d1fae5',
-    color: '#065f38',
-    padding: '2px 8px',
-    borderRadius: '20px',
-    fontSize: '11px',
-    fontWeight: '600',
-  },
-  badgeRejected: {
-    background: '#fee2e2',
-    color: '#991b1b',
-    padding: '2px 8px',
-    borderRadius: '20px',
-    fontSize: '11px',
-    fontWeight: '600',
-  },
 }
 
 export default Navbar

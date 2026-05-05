@@ -2,11 +2,15 @@ import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import axios from 'axios'
 import { useAuth } from '../../context/AuthContext'
+import { useTheme } from '../../context/ThemeContext'
+import { lightTheme, darkTheme } from '../../styles/theme'
 import Navbar from '../../components/Navbar'
 
 const CompanyMyOffers = () => {
 
   const { user } = useAuth()
+  const { isDark } = useTheme()
+  const theme = isDark ? darkTheme : lightTheme
   const headers = { Authorization: `Bearer ${user.token}` }
   const navigate = useNavigate()
 
@@ -103,6 +107,43 @@ const CompanyMyOffers = () => {
 
   const initials = profile.name ? profile.name.charAt(0).toUpperCase() : '?'
   const avatarUrl = profile.profilePicture || null
+
+  const styles = {
+    page: { padding: '32px', fontFamily: 'sans-serif', background: theme.bg, minHeight: '100vh' },
+    profileCard: { background: theme.card, border: `1px solid ${theme.border}`, borderRadius: '12px', padding: '24px', marginBottom: '24px' },
+    cardTitle: { fontSize: '15px', fontWeight: '700', color: theme.text, marginBottom: '16px' },
+    profileTop: { display: 'flex', alignItems: 'center', gap: '16px', marginBottom: '20px' },
+    avatarWrap: { position: 'relative', flexShrink: 0 },
+    avatarImg: { width: '72px', height: '72px', borderRadius: '50%', objectFit: 'cover', border: `2px solid ${theme.border}`, display: 'block' },
+    avatarInitials: { width: '72px', height: '72px', borderRadius: '50%', background: '#1d6bdb', color: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '28px', fontWeight: '700' },
+    avatarEditBtn: { position: 'absolute', bottom: '0', right: '0', background: theme.card, border: `1px solid ${theme.border}`, borderRadius: '50%', width: '24px', height: '24px', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', fontSize: '11px' },
+    profileName: { fontSize: '18px', fontWeight: '700', color: theme.text },
+    profileSector: { fontSize: '13px', color: theme.text2, marginTop: '2px' },
+    profileGrid: { display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '14px' },
+    pageHeader: { display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '24px' },
+    pageTitle: { fontSize: '22px', fontWeight: '700', color: theme.text, marginBottom: '4px' },
+    pageSub: { fontSize: '13px', color: theme.text2 },
+    msgSuccess: { background: '#d1fae5', color: '#065f38', padding: '12px', borderRadius: '8px', marginBottom: '16px', fontSize: '13px' },
+    msgError: { background: '#fee2e2', color: '#991b1b', padding: '12px', borderRadius: '8px', marginBottom: '16px', fontSize: '13px' },
+    formCard: { background: theme.card, border: `1px solid ${theme.border}`, borderRadius: '12px', padding: '24px', marginBottom: '20px' },
+    formTitle: { fontSize: '15px', fontWeight: '700', color: theme.text, marginBottom: '16px' },
+    formRow: { display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '14px' },
+    group: { marginBottom: '14px' },
+    label: { display: 'block', fontSize: '12px', fontWeight: '600', color: theme.text2, marginBottom: '6px', textTransform: 'uppercase', letterSpacing: '0.5px' },
+    input: { width: '100%', padding: '10px 14px', border: `1.5px solid ${theme.border}`, borderRadius: '8px', fontSize: '14px', fontFamily: 'sans-serif', boxSizing: 'border-box', background: theme.inputBg, color: theme.text },
+    textarea: { width: '100%', padding: '10px 14px', border: `1.5px solid ${theme.border}`, borderRadius: '8px', fontSize: '14px', fontFamily: 'sans-serif', boxSizing: 'border-box', resize: 'vertical', background: theme.inputBg, color: theme.text },
+    note: { background: '#fef3cd', color: '#92400e', padding: '10px 14px', borderRadius: '8px', fontSize: '12px', marginBottom: '14px' },
+    card: { background: theme.card, borderRadius: '12px', border: `1px solid ${theme.border}`, overflow: 'hidden' },
+    empty: { padding: '48px', textAlign: 'center', color: '#9aa5b4', fontSize: '14px' },
+    table: { width: '100%', borderCollapse: 'collapse' },
+    th: { padding: '10px 16px', textAlign: 'left', fontSize: '11px', fontWeight: '600', textTransform: 'uppercase', letterSpacing: '0.5px', color: '#9aa5b4', background: theme.tableBg, borderBottom: `1px solid ${theme.border}` },
+    td: { padding: '13px 16px', borderBottom: `1px solid ${theme.border}`, fontSize: '13px', color: theme.text2 },
+    badgeBlue: { background: '#e8f0fd', color: '#1d6bdb', padding: '3px 10px', borderRadius: '20px', fontSize: '11px', fontWeight: '600' },
+    badgePurple: { background: '#f3e8ff', color: '#6b21a8', padding: '3px 10px', borderRadius: '20px', fontSize: '11px', fontWeight: '600' },
+    btnPrimary: { padding: '10px 20px', background: '#1d6bdb', color: '#fff', border: 'none', borderRadius: '8px', fontSize: '13px', fontWeight: '600', cursor: 'pointer', transition: 'background 0.15s' },
+    btnDanger: { padding: '6px 12px', background: '#ef4444', color: '#fff', border: 'none', borderRadius: '7px', fontSize: '12px', cursor: 'pointer', transition: 'background 0.15s' },
+    btnLink: { background: 'none', border: 'none', color: '#1d6bdb', fontSize: '13px', cursor: 'pointer', fontWeight: '600', padding: 0, transition: 'color 0.15s' },
+  }
 
   return (
     <div>
@@ -290,7 +331,7 @@ const CompanyMyOffers = () => {
               <tbody>
                 {offers.map(o => (
                   <tr key={o._id}>
-                    <td style={styles.td}><strong>{o.title}</strong></td>
+                    <td style={styles.td}><strong style={{ color: theme.text }}>{o.title}</strong></td>
                     <td style={styles.td}>
                       <span style={o.type === 'stage' ? styles.badgeBlue : styles.badgePurple}>
                         {o.type}
@@ -326,43 +367,6 @@ const CompanyMyOffers = () => {
       </div>
     </div>
   )
-}
-
-const styles = {
-  page: { padding: '32px', fontFamily: 'sans-serif' },
-  profileCard: { background: '#fff', border: '1px solid #e2e8f0', borderRadius: '12px', padding: '24px', marginBottom: '24px' },
-  cardTitle: { fontSize: '15px', fontWeight: '700', color: '#0f1b2d', marginBottom: '16px' },
-  profileTop: { display: 'flex', alignItems: 'center', gap: '16px', marginBottom: '20px' },
-  avatarWrap: { position: 'relative', flexShrink: 0 },
-  avatarImg: { width: '72px', height: '72px', borderRadius: '50%', objectFit: 'cover', border: '2px solid #e2e8f0', display: 'block' },
-  avatarInitials: { width: '72px', height: '72px', borderRadius: '50%', background: '#1d6bdb', color: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '28px', fontWeight: '700' },
-  avatarEditBtn: { position: 'absolute', bottom: '0', right: '0', background: '#fff', border: '1px solid #e2e8f0', borderRadius: '50%', width: '24px', height: '24px', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', fontSize: '11px' },
-  profileName: { fontSize: '18px', fontWeight: '700', color: '#0f1b2d' },
-  profileSector: { fontSize: '13px', color: '#4a5568', marginTop: '2px' },
-  profileGrid: { display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '14px' },
-  pageHeader: { display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '24px' },
-  pageTitle: { fontSize: '22px', fontWeight: '700', color: '#0f1b2d', marginBottom: '4px' },
-  pageSub: { fontSize: '13px', color: '#4a5568' },
-  msgSuccess: { background: '#d1fae5', color: '#065f38', padding: '12px', borderRadius: '8px', marginBottom: '16px', fontSize: '13px' },
-  msgError: { background: '#fee2e2', color: '#991b1b', padding: '12px', borderRadius: '8px', marginBottom: '16px', fontSize: '13px' },
-  formCard: { background: '#fff', border: '1px solid #e2e8f0', borderRadius: '12px', padding: '24px', marginBottom: '20px' },
-  formTitle: { fontSize: '15px', fontWeight: '700', color: '#0f1b2d', marginBottom: '16px' },
-  formRow: { display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '14px' },
-  group: { marginBottom: '14px' },
-  label: { display: 'block', fontSize: '12px', fontWeight: '600', color: '#4a5568', marginBottom: '6px', textTransform: 'uppercase', letterSpacing: '0.5px' },
-  input: { width: '100%', padding: '10px 14px', border: '1.5px solid #e2e8f0', borderRadius: '8px', fontSize: '14px', fontFamily: 'sans-serif', boxSizing: 'border-box' },
-  textarea: { width: '100%', padding: '10px 14px', border: '1.5px solid #e2e8f0', borderRadius: '8px', fontSize: '14px', fontFamily: 'sans-serif', boxSizing: 'border-box', resize: 'vertical' },
-  note: { background: '#fef3cd', color: '#92400e', padding: '10px 14px', borderRadius: '8px', fontSize: '12px', marginBottom: '14px' },
-  card: { background: '#fff', borderRadius: '12px', border: '1px solid #e2e8f0', overflow: 'hidden' },
-  empty: { padding: '48px', textAlign: 'center', color: '#9aa5b4', fontSize: '14px' },
-  table: { width: '100%', borderCollapse: 'collapse' },
-  th: { padding: '10px 16px', textAlign: 'left', fontSize: '11px', fontWeight: '600', textTransform: 'uppercase', letterSpacing: '0.5px', color: '#9aa5b4', background: '#f5f7fa', borderBottom: '1px solid #e2e8f0' },
-  td: { padding: '13px 16px', borderBottom: '1px solid #e2e8f0', fontSize: '13px', color: '#4a5568' },
-  badgeBlue: { background: '#e8f0fd', color: '#1d6bdb', padding: '3px 10px', borderRadius: '20px', fontSize: '11px', fontWeight: '600' },
-  badgePurple: { background: '#f3e8ff', color: '#6b21a8', padding: '3px 10px', borderRadius: '20px', fontSize: '11px', fontWeight: '600' },
-  btnPrimary: { padding: '10px 20px', background: '#1d6bdb', color: '#fff', border: 'none', borderRadius: '8px', fontSize: '13px', fontWeight: '600', cursor: 'pointer', transition: 'background 0.15s' },
-  btnDanger: { padding: '6px 12px', background: '#ef4444', color: '#fff', border: 'none', borderRadius: '7px', fontSize: '12px', cursor: 'pointer', transition: 'background 0.15s' },
-  btnLink: { background: 'none', border: 'none', color: '#1d6bdb', fontSize: '13px', cursor: 'pointer', fontWeight: '600', padding: 0, transition: 'color 0.15s' },
 }
 
 export default CompanyMyOffers

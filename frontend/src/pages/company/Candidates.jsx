@@ -2,11 +2,15 @@ import { useEffect, useState } from 'react'
 import { useParams } from 'react-router-dom'
 import axios from 'axios'
 import { useAuth } from '../../context/AuthContext'
+import { useTheme } from '../../context/ThemeContext'
+import { lightTheme, darkTheme } from '../../styles/theme'
 import Navbar from '../../components/Navbar'
 
 const CompanyCandidates = () => {
 
   const { user } = useAuth()
+  const { isDark } = useTheme()
+  const theme = isDark ? darkTheme : lightTheme
   const headers = { Authorization: `Bearer ${user.token}` }
   const { offer_id } = useParams()
 
@@ -29,7 +33,7 @@ const CompanyCandidates = () => {
     setApplications(res.data)
   }
 
-  useEffect(() => { fetchApplications() }, [])
+  useEffect(() => { fetchApplications() }, []) // eslint-disable-line react-hooks/exhaustive-deps
 
   const fetchLetters = async (studentId, studentName) => {
     const res = await axios.get(
@@ -70,6 +74,42 @@ const CompanyCandidates = () => {
         {s.label}
       </span>
     )
+  }
+
+  const styles = {
+    page: { padding: '32px', fontFamily: 'sans-serif', background: theme.bg, minHeight: '100vh' },
+    pageHeader: { marginBottom: '24px' },
+    pageTitle: { fontSize: '22px', fontWeight: '700', color: theme.text, marginBottom: '4px' },
+    pageSub: { fontSize: '13px', color: theme.text2 },
+    msgSuccess: { background: '#d1fae5', color: '#065f38', padding: '12px', borderRadius: '8px', marginBottom: '16px', fontSize: '13px' },
+    msgError: { background: '#fee2e2', color: '#991b1b', padding: '12px', borderRadius: '8px', marginBottom: '16px', fontSize: '13px' },
+    empty: { textAlign: 'center', padding: '64px', color: '#9aa5b4', fontSize: '14px' },
+    candidateCard: { background: theme.card, borderRadius: '12px', border: `1px solid ${theme.border}`, padding: '20px', marginBottom: '16px', display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' },
+    candidateInfo: { flex: 1 },
+    candidateName: { fontSize: '15px', fontWeight: '700', color: theme.text, marginBottom: '4px' },
+    candidateMeta: { fontSize: '12px', color: '#9aa5b4', marginBottom: '4px' },
+    candidateDate: { fontSize: '12px', color: '#9aa5b4', marginBottom: '6px' },
+    candidateMessage: { fontSize: '12px', color: theme.text2, fontStyle: 'italic', marginTop: '6px' },
+    candidateRight: { display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: '10px' },
+    candidateActions: { display: 'flex', gap: '8px', alignItems: 'center', flexWrap: 'wrap', justifyContent: 'flex-end' },
+    btnCV: { padding: '6px 12px', background: '#e8f0fd', color: '#1d6bdb', borderRadius: '7px', fontSize: '12px', fontWeight: '600', textDecoration: 'none', transition: 'background 0.15s' },
+    btnLetters: { padding: '6px 10px', background: '#e8f0fd', color: '#1d6bdb', border: 'none', borderRadius: '7px', fontSize: '14px', cursor: 'pointer', transition: 'background 0.15s' },
+    btnLinkedIn: { width: '28px', height: '28px', background: '#0077b5', color: '#fff', borderRadius: '6px', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '12px', fontWeight: '700', textDecoration: 'none' },
+    btnGitHub: { width: '28px', height: '28px', background: '#24292e', color: '#fff', borderRadius: '6px', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '10px', fontWeight: '700', textDecoration: 'none' },
+    btnSuccess: { padding: '7px 14px', background: '#10b981', color: '#fff', border: 'none', borderRadius: '7px', fontSize: '12px', cursor: 'pointer', fontWeight: '600', transition: 'background 0.15s' },
+    btnDanger: { padding: '7px 14px', background: '#ef4444', color: '#fff', border: 'none', borderRadius: '7px', fontSize: '12px', cursor: 'pointer', fontWeight: '600', transition: 'background 0.15s' },
+    btnOutline: { padding: '7px 14px', background: 'transparent', border: `1.5px solid ${theme.border}`, borderRadius: '7px', fontSize: '12px', cursor: 'pointer', color: theme.text2, transition: 'background 0.15s' },
+    modal: { position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.45)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 200 },
+    modalBox: { background: theme.card, borderRadius: '16px', padding: '32px', width: '100%', maxWidth: '480px' },
+    modalTitle: { fontSize: '17px', fontWeight: '700', color: theme.text, marginBottom: '20px' },
+    group: { marginBottom: '16px' },
+    label: { display: 'block', fontSize: '12px', fontWeight: '600', color: theme.text2, marginBottom: '6px', textTransform: 'uppercase', letterSpacing: '0.5px' },
+    textarea: { width: '100%', padding: '10px 14px', border: `1.5px solid ${theme.border}`, borderRadius: '8px', fontSize: '14px', fontFamily: 'sans-serif', boxSizing: 'border-box', resize: 'vertical', background: theme.inputBg, color: theme.text },
+    noLetters: { color: '#9aa5b4', fontSize: '13px', textAlign: 'center', padding: '24px' },
+    letterCard: { background: isDark ? '#1e2f47' : '#e6f7f7', borderRadius: '10px', padding: '16px', marginBottom: '12px' },
+    letterTeacher: { fontWeight: '600', fontSize: '13px', color: '#0ea5a0', marginBottom: '8px' },
+    letterContent: { fontSize: '13px', color: theme.text2, fontStyle: 'italic', lineHeight: '1.6', marginBottom: '6px' },
+    letterDate: { fontSize: '11px', color: '#9aa5b4' },
   }
 
   return (
@@ -221,7 +261,7 @@ const CompanyCandidates = () => {
                 </button>
                 <button style={styles.btnOutline}
                   onClick={() => { setSelected(null); setAcceptMsg(''); setRejectMsg('') }}
-                  onMouseEnter={e => e.currentTarget.style.background = '#f1f5f9'}
+                  onMouseEnter={e => e.currentTarget.style.background = isDark ? '#1e2f47' : '#f1f5f9'}
                   onMouseLeave={e => e.currentTarget.style.background = 'transparent'}>
                   Annuler
                 </button>
@@ -256,7 +296,7 @@ const CompanyCandidates = () => {
               <div style={{ marginTop: '20px' }}>
                 <button style={styles.btnOutline}
                   onClick={() => setShowLetters(false)}
-                  onMouseEnter={e => e.currentTarget.style.background = '#f1f5f9'}
+                  onMouseEnter={e => e.currentTarget.style.background = isDark ? '#1e2f47' : '#f1f5f9'}
                   onMouseLeave={e => e.currentTarget.style.background = 'transparent'}>
                   Fermer
                 </button>
@@ -267,42 +307,6 @@ const CompanyCandidates = () => {
       </div>
     </div>
   )
-}
-
-const styles = {
-  page: { padding: '32px', fontFamily: 'sans-serif' },
-  pageHeader: { marginBottom: '24px' },
-  pageTitle: { fontSize: '22px', fontWeight: '700', color: '#0f1b2d', marginBottom: '4px' },
-  pageSub: { fontSize: '13px', color: '#4a5568' },
-  msgSuccess: { background: '#d1fae5', color: '#065f38', padding: '12px', borderRadius: '8px', marginBottom: '16px', fontSize: '13px' },
-  msgError: { background: '#fee2e2', color: '#991b1b', padding: '12px', borderRadius: '8px', marginBottom: '16px', fontSize: '13px' },
-  empty: { textAlign: 'center', padding: '64px', color: '#9aa5b4', fontSize: '14px' },
-  candidateCard: { background: '#fff', borderRadius: '12px', border: '1px solid #e2e8f0', padding: '20px', marginBottom: '16px', display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' },
-  candidateInfo: { flex: 1 },
-  candidateName: { fontSize: '15px', fontWeight: '700', color: '#0f1b2d', marginBottom: '4px' },
-  candidateMeta: { fontSize: '12px', color: '#9aa5b4', marginBottom: '4px' },
-  candidateDate: { fontSize: '12px', color: '#9aa5b4', marginBottom: '6px' },
-  candidateMessage: { fontSize: '12px', color: '#4a5568', fontStyle: 'italic', marginTop: '6px' },
-  candidateRight: { display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: '10px' },
-  candidateActions: { display: 'flex', gap: '8px', alignItems: 'center', flexWrap: 'wrap', justifyContent: 'flex-end' },
-  btnCV: { padding: '6px 12px', background: '#e8f0fd', color: '#1d6bdb', borderRadius: '7px', fontSize: '12px', fontWeight: '600', textDecoration: 'none', transition: 'background 0.15s' },
-  btnLetters: { padding: '6px 10px', background: '#e8f0fd', color: '#1d6bdb', border: 'none', borderRadius: '7px', fontSize: '14px', cursor: 'pointer', transition: 'background 0.15s' },
-  btnLinkedIn: { width: '28px', height: '28px', background: '#0077b5', color: '#fff', borderRadius: '6px', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '12px', fontWeight: '700', textDecoration: 'none' },
-  btnGitHub: { width: '28px', height: '28px', background: '#24292e', color: '#fff', borderRadius: '6px', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '10px', fontWeight: '700', textDecoration: 'none' },
-  btnSuccess: { padding: '7px 14px', background: '#10b981', color: '#fff', border: 'none', borderRadius: '7px', fontSize: '12px', cursor: 'pointer', fontWeight: '600', transition: 'background 0.15s' },
-  btnDanger: { padding: '7px 14px', background: '#ef4444', color: '#fff', border: 'none', borderRadius: '7px', fontSize: '12px', cursor: 'pointer', fontWeight: '600', transition: 'background 0.15s' },
-  btnOutline: { padding: '7px 14px', background: 'transparent', border: '1.5px solid #e2e8f0', borderRadius: '7px', fontSize: '12px', cursor: 'pointer', color: '#4a5568', transition: 'background 0.15s' },
-  modal: { position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.45)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 200 },
-  modalBox: { background: '#fff', borderRadius: '16px', padding: '32px', width: '100%', maxWidth: '480px' },
-  modalTitle: { fontSize: '17px', fontWeight: '700', color: '#0f1b2d', marginBottom: '20px' },
-  group: { marginBottom: '16px' },
-  label: { display: 'block', fontSize: '12px', fontWeight: '600', color: '#4a5568', marginBottom: '6px', textTransform: 'uppercase', letterSpacing: '0.5px' },
-  textarea: { width: '100%', padding: '10px 14px', border: '1.5px solid #e2e8f0', borderRadius: '8px', fontSize: '14px', fontFamily: 'sans-serif', boxSizing: 'border-box', resize: 'vertical' },
-  noLetters: { color: '#9aa5b4', fontSize: '13px', textAlign: 'center', padding: '24px' },
-  letterCard: { background: '#e6f7f7', borderRadius: '10px', padding: '16px', marginBottom: '12px' },
-  letterTeacher: { fontWeight: '600', fontSize: '13px', color: '#065f60', marginBottom: '8px' },
-  letterContent: { fontSize: '13px', color: '#4a5568', fontStyle: 'italic', lineHeight: '1.6', marginBottom: '6px' },
-  letterDate: { fontSize: '11px', color: '#9aa5b4' },
 }
 
 export default CompanyCandidates

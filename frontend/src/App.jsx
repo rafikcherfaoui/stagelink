@@ -1,4 +1,6 @@
 import { Routes, Route } from 'react-router-dom'
+import { useEffect } from 'react'
+import { useTheme } from './context/ThemeContext'
 
 // public pages
 import Landing from './pages/Landing'
@@ -28,6 +30,14 @@ import CompanyCandidates from './pages/company/Candidates'
 import PrivateRoute from './components/PrivateRoute'
 
 const App = () => {
+  const { isDark } = useTheme()
+
+  // Keep the body background in sync with the theme so the area outside
+  // of any card also uses the right colour, not the browser default white.
+  useEffect(() => {
+    document.body.style.background = isDark ? '#0f1b2d' : '#f5f7fa'
+  }, [isDark])
+
   return (
     <Routes>
 

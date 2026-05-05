@@ -30,6 +30,13 @@ const createUser = asyncHandler(async (req, res) => {
     return res.status(400).json({ message: 'Rôle invalide — student ou teacher uniquement' })
   }
 
+  // Only allow university email addresses — no personal Gmail, Yahoo, etc.
+  if (!email.endsWith('@univ-blida.dz')) {
+    return res.status(400).json({
+      message: 'Email invalide — utilisez un email universitaire @univ-blida.dz'
+    })
+  }
+
   const userExists = await User.findOne({ email })
   if (userExists) {
     return res.status(400).json({ message: 'Cet email est déjà utilisé' })
@@ -66,12 +73,12 @@ const createUser = asyncHandler(async (req, res) => {
     temporaryPassword: rawPassword
   })
 
-  // fire-and-forget welcome email
+  // Send welcome email without blocking the response — if it fails the account still exists
   sendEmail({
     to: email,
     subject: 'Bienvenue sur DahlabConnect — Vos identifiants de connexion',
     html: accountCreatedTemplate(fullName, email, rawPassword, role)
-  })
+  }).catch(err => console.log('Email failed (non-blocking):', err.message))
 })
 
 // ────────────────────────────────────────────

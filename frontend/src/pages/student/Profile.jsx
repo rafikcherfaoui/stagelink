@@ -1,11 +1,15 @@
 import { useEffect, useState } from 'react'
 import axios from 'axios'
 import { useAuth } from '../../context/AuthContext'
+import { useTheme } from '../../context/ThemeContext'
+import { lightTheme, darkTheme } from '../../styles/theme'
 import Navbar from '../../components/Navbar'
 
 const StudentProfile = () => {
 
   const { user } = useAuth()
+  const { isDark } = useTheme()
+  const theme = isDark ? darkTheme : lightTheme
   const headers = { Authorization: `Bearer ${user.token}` }
 
   const [form, setForm] = useState({ fullName: '', phone: '', speciality: '', level: '', linkedin: '', github: '' })
@@ -121,6 +125,32 @@ const StudentProfile = () => {
   const avatarUrl = profilePicture || null
   const initials = form.fullName ? form.fullName.charAt(0).toUpperCase() : '?'
 
+  const styles = {
+    page: { padding: '32px', fontFamily: 'sans-serif', background: theme.bg, minHeight: '100vh' },
+    pageTitle: { fontSize: '22px', fontWeight: '700', color: theme.text, marginBottom: '24px' },
+    msgSuccess: { background: '#d1fae5', color: '#065f38', padding: '12px', borderRadius: '8px', marginBottom: '16px', fontSize: '13px' },
+    msgError: { background: '#fee2e2', color: '#991b1b', padding: '12px', borderRadius: '8px', marginBottom: '16px', fontSize: '13px' },
+    avatarSection: { display: 'flex', alignItems: 'center', gap: '20px', background: theme.card, border: `1px solid ${theme.border}`, borderRadius: '12px', padding: '20px 24px', marginBottom: '20px' },
+    avatarImg: { width: '80px', height: '80px', borderRadius: '50%', objectFit: 'cover', border: `2px solid ${theme.border}`, display: 'block' },
+    avatarInitials: { width: '80px', height: '80px', borderRadius: '50%', background: '#1d6bdb', color: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '32px', fontWeight: '700' },
+    avatarControls: { display: 'flex', alignItems: 'center', gap: '12px', flexWrap: 'wrap' },
+    grid: { display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px' },
+    card: { background: theme.card, borderRadius: '12px', border: `1px solid ${theme.border}`, padding: '24px' },
+    cardTitle: { fontSize: '15px', fontWeight: '700', color: theme.text, marginBottom: '16px' },
+    group: { marginBottom: '14px' },
+    label: { display: 'block', fontSize: '12px', fontWeight: '600', color: theme.text2, marginBottom: '6px', textTransform: 'uppercase', letterSpacing: '0.5px' },
+    input: { width: '100%', padding: '10px 14px', border: `1.5px solid ${theme.border}`, borderRadius: '8px', fontSize: '14px', fontFamily: 'sans-serif', boxSizing: 'border-box', background: theme.inputBg, color: theme.text },
+    textarea: { width: '100%', padding: '10px 14px', border: `1.5px solid ${theme.border}`, borderRadius: '8px', fontSize: '14px', fontFamily: 'sans-serif', boxSizing: 'border-box', resize: 'vertical', background: theme.inputBg, color: theme.text },
+    uploadZone: { border: `2px dashed ${theme.border}`, borderRadius: '10px', padding: '24px', textAlign: 'center' },
+    btnPrimary: { padding: '10px 20px', background: '#1d6bdb', color: '#fff', border: 'none', borderRadius: '8px', fontSize: '13px', fontWeight: '600', cursor: 'pointer', transition: 'background 0.15s' },
+    btnTeal: { padding: '10px 20px', background: '#0ea5a0', color: '#fff', border: 'none', borderRadius: '8px', fontSize: '13px', fontWeight: '600', cursor: 'pointer', transition: 'background 0.15s' },
+    empty: { color: '#9aa5b4', fontSize: '13px', textAlign: 'center', padding: '24px' },
+    letterCard: { background: isDark ? '#1e2f47' : '#e6f7f7', borderRadius: '10px', padding: '16px', marginBottom: '12px' },
+    letterTeacher: { fontWeight: '600', fontSize: '13px', color: '#0ea5a0', marginBottom: '8px' },
+    letterContent: { fontSize: '13px', color: theme.text2, fontStyle: 'italic', lineHeight: '1.6', marginBottom: '8px' },
+    letterDate: { fontSize: '11px', color: '#9aa5b4' },
+  }
+
   return (
     <div>
       <Navbar />
@@ -133,11 +163,26 @@ const StudentProfile = () => {
           </div>
         )}
 
-        
+        {/* avatar upload section */}
+        <div style={styles.avatarSection}>
+          {avatarUrl ? (
+            <img src={avatarUrl} alt='avatar' style={styles.avatarImg} />
+          ) : (
+            <div style={styles.avatarInitials}>{initials}</div>
+          )}
+          <div style={styles.avatarControls}>
+            <input type='file' accept='image/jpeg,image/png'
+              onChange={e => setPictureFile(e.target.files[0])}
+              style={{ fontSize: '13px', color: theme.text2 }} />
+            <button style={styles.btnPrimary} onClick={handleUploadPicture}
+              onMouseEnter={e => e.currentTarget.style.background = '#1454b6'}
+              onMouseLeave={e => e.currentTarget.style.background = '#1d6bdb'}>
+              Mettre à jour la photo
+            </button>
+          </div>
+        </div>
 
         <div style={styles.grid}>
-
-          {/* profile form */}
           <div style={styles.card}>
             <div style={styles.cardTitle}>Informations personnelles</div>
             <form onSubmit={handleUpdateProfile}>
@@ -149,8 +194,7 @@ const StudentProfile = () => {
               <div style={styles.group}>
                 <label style={styles.label}>Téléphone</label>
                 <input style={styles.input} value={form.phone}
-                  onChange={e => setForm({ ...form, phone: e.target.value })}
-                  placeholder='+213 555 ...' />
+                  onChange={e => setForm({ ...form, phone: e.target.value })} placeholder='+213 555 ...' />
               </div>
               <div style={styles.group}>
                 <label style={styles.label}>LinkedIn</label>
@@ -186,17 +230,16 @@ const StudentProfile = () => {
           </div>
 
           <div>
-            {/* cv upload */}
             <div style={{ ...styles.card, marginBottom: '16px' }}>
               <div style={styles.cardTitle}>Mon CV</div>
               <div style={styles.uploadZone}>
                 <div style={{ fontSize: '28px', marginBottom: '8px' }}>📄</div>
-                <div style={{ fontSize: '13px', color: '#4a5568', marginBottom: '12px' }}>
+                <div style={{ fontSize: '13px', color: theme.text2, marginBottom: '12px' }}>
                   Uploadez votre CV en format PDF (max 5MB)
                 </div>
                 <input type='file' accept='.pdf'
                   onChange={e => setCvFile(e.target.files[0])}
-                  style={{ fontSize: '13px', marginBottom: '12px' }} />
+                  style={{ fontSize: '13px', marginBottom: '12px', color: theme.text2 }} />
                 <br />
                 <button style={styles.btnPrimary} onClick={handleUploadCV}
                   onMouseEnter={e => e.currentTarget.style.background = '#1454b6'}
@@ -206,7 +249,6 @@ const StudentProfile = () => {
               </div>
             </div>
 
-            {/* recommendation request */}
             <div style={styles.card}>
               <div style={styles.cardTitle}>Demander une recommandation</div>
               <div style={styles.group}>
@@ -215,19 +257,15 @@ const StudentProfile = () => {
                   onChange={e => setSelectedTeacher(e.target.value)}>
                   <option value=''>-- Sélectionner --</option>
                   {teachers.map(t => (
-                    <option key={t._id} value={t._id}>
-                      {t.fullName} — {t.speciality}
-                    </option>
+                    <option key={t._id} value={t._id}>{t.fullName} — {t.speciality}</option>
                   ))}
                 </select>
               </div>
               <div style={styles.group}>
                 <label style={styles.label}>Message (optionnel)</label>
-                <textarea style={styles.textarea}
-                  value={reqMessage}
+                <textarea style={styles.textarea} value={reqMessage}
                   onChange={e => setReqMessage(e.target.value)}
-                  placeholder='Expliquez pourquoi vous demandez cette recommandation...'
-                  rows={3} />
+                  placeholder='Expliquez pourquoi vous demandez cette recommandation...' rows={3} />
               </div>
               <button style={styles.btnTeal} onClick={handleSendRequest}
                 onMouseEnter={e => e.currentTarget.style.background = '#0b918c'}
@@ -238,7 +276,6 @@ const StudentProfile = () => {
           </div>
         </div>
 
-        {/* recommendation letters received */}
         <div style={{ ...styles.card, marginTop: '20px' }}>
           <div style={styles.cardTitle}>Lettres de recommandation reçues</div>
           {letters.length === 0 ? (
@@ -246,42 +283,31 @@ const StudentProfile = () => {
           ) : (
             letters.map(l => (
               <div key={l._id} style={styles.letterCard}>
-                <div style={styles.letterTeacher}>
-                  {l.teacher_id?.fullName} · {l.teacher_id?.speciality}
-                </div>
+                <div style={styles.letterTeacher}>{l.teacher_id?.fullName} · {l.teacher_id?.speciality}</div>
                 <div style={styles.letterContent}>"{l.content}"</div>
-                <div style={styles.letterDate}>
-                  {new Date(l.createdAt).toLocaleDateString('fr-FR')}
-                </div>
+                <div style={styles.letterDate}>{new Date(l.createdAt).toLocaleDateString('fr-FR')}</div>
               </div>
             ))
           )}
         </div>
 
-        {/* change password */}
         <div style={{ ...styles.card, marginTop: '20px' }}>
           <div style={styles.cardTitle}>Modifier le mot de passe</div>
           <div style={styles.grid}>
             <div style={styles.group}>
               <label style={styles.label}>Ancien mot de passe</label>
-              <input style={styles.input} type='password'
-                value={passwords.oldPassword}
-                onChange={e => setPasswords({ ...passwords, oldPassword: e.target.value })}
-                placeholder='••••••••' />
+              <input style={styles.input} type='password' value={passwords.oldPassword}
+                onChange={e => setPasswords({ ...passwords, oldPassword: e.target.value })} placeholder='••••••••' />
             </div>
             <div style={styles.group}>
               <label style={styles.label}>Nouveau mot de passe</label>
-              <input style={styles.input} type='password'
-                value={passwords.newPassword}
-                onChange={e => setPasswords({ ...passwords, newPassword: e.target.value })}
-                placeholder='••••••••' />
+              <input style={styles.input} type='password' value={passwords.newPassword}
+                onChange={e => setPasswords({ ...passwords, newPassword: e.target.value })} placeholder='••••••••' />
             </div>
             <div style={styles.group}>
               <label style={styles.label}>Confirmer le mot de passe</label>
-              <input style={styles.input} type='password'
-                value={passwords.confirm}
-                onChange={e => setPasswords({ ...passwords, confirm: e.target.value })}
-                placeholder='••••••••' />
+              <input style={styles.input} type='password' value={passwords.confirm}
+                onChange={e => setPasswords({ ...passwords, confirm: e.target.value })} placeholder='••••••••' />
             </div>
           </div>
           <button style={styles.btnPrimary} onClick={handleChangePassword}
@@ -290,37 +316,9 @@ const StudentProfile = () => {
             Modifier le mot de passe
           </button>
         </div>
-
       </div>
     </div>
   )
-}
-
-const styles = {
-  page: { padding: '32px', fontFamily: 'sans-serif' },
-  pageTitle: { fontSize: '22px', fontWeight: '700', color: '#0f1b2d', marginBottom: '24px' },
-  msgSuccess: { background: '#d1fae5', color: '#065f38', padding: '12px', borderRadius: '8px', marginBottom: '16px', fontSize: '13px' },
-  msgError: { background: '#fee2e2', color: '#991b1b', padding: '12px', borderRadius: '8px', marginBottom: '16px', fontSize: '13px' },
-  avatarSection: { display: 'flex', alignItems: 'center', gap: '20px', background: '#fff', border: '1px solid #e2e8f0', borderRadius: '12px', padding: '20px 24px', marginBottom: '20px' },
-  avatarWrap: { flexShrink: 0 },
-  avatarImg: { width: '80px', height: '80px', borderRadius: '50%', objectFit: 'cover', border: '2px solid #e2e8f0', display: 'block' },
-  avatarInitials: { width: '80px', height: '80px', borderRadius: '50%', background: '#1d6bdb', color: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '32px', fontWeight: '700' },
-  avatarControls: { display: 'flex', alignItems: 'center', gap: '12px', flexWrap: 'wrap' },
-  grid: { display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px' },
-  card: { background: '#fff', borderRadius: '12px', border: '1px solid #e2e8f0', padding: '24px' },
-  cardTitle: { fontSize: '15px', fontWeight: '700', color: '#0f1b2d', marginBottom: '16px' },
-  group: { marginBottom: '14px' },
-  label: { display: 'block', fontSize: '12px', fontWeight: '600', color: '#4a5568', marginBottom: '6px', textTransform: 'uppercase', letterSpacing: '0.5px' },
-  input: { width: '100%', padding: '10px 14px', border: '1.5px solid #e2e8f0', borderRadius: '8px', fontSize: '14px', fontFamily: 'sans-serif', boxSizing: 'border-box' },
-  textarea: { width: '100%', padding: '10px 14px', border: '1.5px solid #e2e8f0', borderRadius: '8px', fontSize: '14px', fontFamily: 'sans-serif', boxSizing: 'border-box', resize: 'vertical' },
-  uploadZone: { border: '2px dashed #e2e8f0', borderRadius: '10px', padding: '24px', textAlign: 'center' },
-  btnPrimary: { padding: '10px 20px', background: '#1d6bdb', color: '#fff', border: 'none', borderRadius: '8px', fontSize: '13px', fontWeight: '600', cursor: 'pointer', transition: 'background 0.15s' },
-  btnTeal: { padding: '10px 20px', background: '#0ea5a0', color: '#fff', border: 'none', borderRadius: '8px', fontSize: '13px', fontWeight: '600', cursor: 'pointer', transition: 'background 0.15s' },
-  empty: { color: '#9aa5b4', fontSize: '13px', textAlign: 'center', padding: '24px' },
-  letterCard: { background: '#e6f7f7', borderRadius: '10px', padding: '16px', marginBottom: '12px' },
-  letterTeacher: { fontWeight: '600', fontSize: '13px', color: '#065f60', marginBottom: '8px' },
-  letterContent: { fontSize: '13px', color: '#4a5568', fontStyle: 'italic', lineHeight: '1.6', marginBottom: '8px' },
-  letterDate: { fontSize: '11px', color: '#9aa5b4' },
 }
 
 export default StudentProfile

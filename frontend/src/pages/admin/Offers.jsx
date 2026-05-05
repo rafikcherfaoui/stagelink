@@ -1,11 +1,15 @@
 import { useEffect, useState } from 'react'
 import axios from 'axios'
 import { useAuth } from '../../context/AuthContext'
+import { useTheme } from '../../context/ThemeContext'
+import { lightTheme, darkTheme } from '../../styles/theme'
 import Navbar from '../../components/Navbar'
 
 const AdminOffers = () => {
 
   const { user } = useAuth()
+  const { isDark } = useTheme()
+  const theme = isDark ? darkTheme : lightTheme
   const headers = { Authorization: `Bearer ${user.token}` }
 
   const [offers, setOffers] = useState([])
@@ -22,6 +26,24 @@ const AdminOffers = () => {
     await axios.put(`${import.meta.env.VITE_API_URL}/api/offers/${id}/status`, { status }, { headers })
     setMessage(status === 'published' ? 'Offre publiée ✓' : 'Offre rejetée')
     fetchOffers()
+  }
+
+  const styles = {
+    page: { padding: '32px', fontFamily: 'sans-serif', background: theme.bg, minHeight: '100vh' },
+    pageHeader: { marginBottom: '24px' },
+    pageTitle: { fontSize: '22px', fontWeight: '700', color: theme.text, marginBottom: '4px' },
+    pageSub: { fontSize: '13px', color: theme.text2 },
+    msg: { background: '#d1fae5', color: '#065f38', padding: '12px', borderRadius: '8px', marginBottom: '16px', fontSize: '13px' },
+    card: { background: theme.card, borderRadius: '12px', border: `1px solid ${theme.border}`, overflow: 'hidden' },
+    empty: { padding: '48px', textAlign: 'center', color: '#9aa5b4', fontSize: '14px' },
+    table: { width: '100%', borderCollapse: 'collapse' },
+    th: { padding: '10px 16px', textAlign: 'left', fontSize: '11px', fontWeight: '600', textTransform: 'uppercase', letterSpacing: '0.5px', color: '#9aa5b4', background: theme.tableBg, borderBottom: `1px solid ${theme.border}` },
+    td: { padding: '13px 16px', borderBottom: `1px solid ${theme.border}`, fontSize: '13px', color: theme.text2 },
+    badgeBlue: { background: '#e8f0fd', color: '#1d6bdb', padding: '3px 10px', borderRadius: '20px', fontSize: '11px', fontWeight: '600' },
+    badgePurple: { background: '#f3e8ff', color: '#6b21a8', padding: '3px 10px', borderRadius: '20px', fontSize: '11px', fontWeight: '600' },
+    logoFallback: { width: '36px', height: '36px', borderRadius: '8px', background: '#e8f0fd', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: '700', color: '#1d6bdb', fontSize: '14px' },
+    btnSuccess: { padding: '6px 12px', background: '#10b981', color: '#fff', border: 'none', borderRadius: '7px', fontSize: '12px', cursor: 'pointer', transition: 'background 0.15s' },
+    btnDanger: { padding: '6px 12px', background: '#ef4444', color: '#fff', border: 'none', borderRadius: '7px', fontSize: '12px', cursor: 'pointer', transition: 'background 0.15s' },
   }
 
   return (
@@ -55,25 +77,18 @@ const AdminOffers = () => {
               <tbody>
                 {offers.map(o => (
                   <tr key={o._id}>
-                    <td style={styles.td}><strong>{o.title}</strong></td>
+                    <td style={styles.td}><strong style={{ color: theme.text }}>{o.title}</strong></td>
                     <td style={styles.td}>
                       {o.company_id?.profilePicture ? (
-                        <img
-                          src={o.company_id.profilePicture}
-                          alt={o.company_id.name}
-                          style={{ width: '36px', height: '36px', borderRadius: '8px', objectFit: 'cover' }}
-                        />
+                        <img src={o.company_id.profilePicture} alt={o.company_id.name}
+                          style={{ width: '36px', height: '36px', borderRadius: '8px', objectFit: 'cover' }} />
                       ) : (
-                        <div style={styles.logoFallback}>
-                          {o.company_id?.name?.charAt(0)}
-                        </div>
+                        <div style={styles.logoFallback}>{o.company_id?.name?.charAt(0)}</div>
                       )}
                     </td>
                     <td style={styles.td}>{o.company_id?.name}</td>
                     <td style={styles.td}>
-                      <span style={o.type === 'stage' ? styles.badgeBlue : styles.badgePurple}>
-                        {o.type}
-                      </span>
+                      <span style={o.type === 'stage' ? styles.badgeBlue : styles.badgePurple}>{o.type}</span>
                     </td>
                     <td style={styles.td}>{o.requiredLevel}</td>
                     <td style={styles.td}>{o.location}</td>
@@ -96,24 +111,6 @@ const AdminOffers = () => {
       </div>
     </div>
   )
-}
-
-const styles = {
-  page: { padding: '32px', fontFamily: 'sans-serif' },
-  pageHeader: { marginBottom: '24px' },
-  pageTitle: { fontSize: '22px', fontWeight: '700', color: '#0f1b2d', marginBottom: '4px' },
-  pageSub: { fontSize: '13px', color: '#4a5568' },
-  msg: { background: '#d1fae5', color: '#065f38', padding: '12px', borderRadius: '8px', marginBottom: '16px', fontSize: '13px' },
-  card: { background: '#fff', borderRadius: '12px', border: '1px solid #e2e8f0', overflow: 'hidden' },
-  empty: { padding: '48px', textAlign: 'center', color: '#9aa5b4', fontSize: '14px' },
-  table: { width: '100%', borderCollapse: 'collapse' },
-  th: { padding: '10px 16px', textAlign: 'left', fontSize: '11px', fontWeight: '600', textTransform: 'uppercase', letterSpacing: '0.5px', color: '#9aa5b4', background: '#f5f7fa', borderBottom: '1px solid #e2e8f0' },
-  td: { padding: '13px 16px', borderBottom: '1px solid #e2e8f0', fontSize: '13px', color: '#4a5568' },
-  badgeBlue: { background: '#e8f0fd', color: '#1d6bdb', padding: '3px 10px', borderRadius: '20px', fontSize: '11px', fontWeight: '600' },
-  badgePurple: { background: '#f3e8ff', color: '#6b21a8', padding: '3px 10px', borderRadius: '20px', fontSize: '11px', fontWeight: '600' },
-  logoFallback: { width: '36px', height: '36px', borderRadius: '8px', background: '#e8f0fd', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: '700', color: '#1d6bdb', fontSize: '14px' },
-  btnSuccess: { padding: '6px 12px', background: '#10b981', color: '#fff', border: 'none', borderRadius: '7px', fontSize: '12px', cursor: 'pointer', transition: 'background 0.15s' },
-  btnDanger: { padding: '6px 12px', background: '#ef4444', color: '#fff', border: 'none', borderRadius: '7px', fontSize: '12px', cursor: 'pointer', transition: 'background 0.15s' },
 }
 
 export default AdminOffers
