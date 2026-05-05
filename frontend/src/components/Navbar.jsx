@@ -5,6 +5,7 @@ import { useAuth } from '../context/AuthContext'
 import { useTheme } from '../context/ThemeContext'
 import { lightTheme, darkTheme } from '../styles/theme'
 import logo from '../assets/usdb_logo.png'
+import ThemeToggleIcon from './ThemeToggleIcon'
 
 const Navbar = () => {
 
@@ -182,9 +183,8 @@ const Navbar = () => {
             <span style={styles.username}>{user.fullName || user.name}</span>
             <span style={styles.role}>{user.role}</span>
 
-            {/* Theme toggle — moon = switch to dark, sun = switch to light */}
             <button onClick={toggleTheme} style={styles.themeBtn} title={isDark ? 'Mode clair' : 'Mode sombre'}>
-              {isDark ? '☀️' : '🌙'}
+              <ThemeToggleIcon size={18} color={theme.text2} />
             </button>
 
             <button onClick={handleLogout} style={styles.logoutBtn}

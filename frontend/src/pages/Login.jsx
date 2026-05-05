@@ -2,10 +2,15 @@ import { useState } from 'react'
 import { useNavigate, Link } from 'react-router-dom'
 import axios from 'axios'
 import { useAuth } from '../context/AuthContext'
+import { useTheme } from '../context/ThemeContext'
+import { lightTheme, darkTheme } from '../styles/theme'
+import ThemeToggleIcon from '../components/ThemeToggleIcon'
 
 const Login = () => {
 
   const { login } = useAuth()
+  const { isDark, toggleTheme } = useTheme()
+  const theme = isDark ? darkTheme : lightTheme
   const navigate = useNavigate()
 
   const [form, setForm] = useState({ email: '', password: '' })
@@ -23,9 +28,8 @@ const Login = () => {
 
     try {
       const res = await axios.post(`${import.meta.env.VITE_API_URL}/api/auth/login`, form)
-      login(res.data)   // save user and token in context + localStorage
+      login(res.data)
 
-      // redirect based on role
       const role = res.data.role
       if (role === 'admin') navigate('/admin/dashboard')
       else if (role === 'student') navigate('/student/offers')
@@ -38,10 +42,114 @@ const Login = () => {
     }
   }
 
+  const styles = {
+    container: {
+      minHeight: '100vh',
+      background: theme.bg,
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'center',
+      fontFamily: 'sans-serif',
+      padding: '20px',
+    },
+    themeBtn: {
+      position: 'fixed',
+      top: '16px',
+      right: '16px',
+      padding: '8px 10px',
+      borderRadius: '8px',
+      border: `1.5px solid ${theme.border}`,
+      background: theme.card,
+      cursor: 'pointer',
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'center',
+    },
+    box: {
+      background: theme.card,
+      borderRadius: '16px',
+      padding: '40px',
+      width: '100%',
+      maxWidth: '420px',
+      border: `1px solid ${theme.border}`,
+    },
+    brand: {
+      fontSize: '22px',
+      fontWeight: '800',
+      color: theme.text,
+      marginBottom: '24px',
+    },
+    accent: { color: '#0ea5a0' },
+    title: {
+      fontSize: '24px',
+      fontWeight: '700',
+      color: theme.text,
+      marginBottom: '4px',
+    },
+    subtitle: {
+      fontSize: '13px',
+      color: '#9aa5b4',
+      marginBottom: '28px',
+    },
+    error: {
+      background: '#fee2e2',
+      color: '#991b1b',
+      padding: '12px',
+      borderRadius: '8px',
+      fontSize: '13px',
+      marginBottom: '16px',
+    },
+    group: { marginBottom: '16px' },
+    label: {
+      display: 'block',
+      fontSize: '12px',
+      fontWeight: '600',
+      color: theme.text2,
+      marginBottom: '6px',
+      textTransform: 'uppercase',
+      letterSpacing: '0.5px',
+    },
+    input: {
+      width: '100%',
+      padding: '11px 14px',
+      border: `1.5px solid ${theme.border}`,
+      borderRadius: '8px',
+      fontSize: '14px',
+      fontFamily: 'sans-serif',
+      color: theme.text,
+      background: theme.inputBg,
+      boxSizing: 'border-box',
+    },
+    btn: {
+      width: '100%',
+      padding: '12px',
+      background: '#1d6bdb',
+      color: '#ffffff',
+      border: 'none',
+      borderRadius: '8px',
+      fontSize: '14px',
+      fontWeight: '600',
+      cursor: 'pointer',
+      marginTop: '8px',
+      fontFamily: 'sans-serif',
+      transition: 'background 0.15s',
+    },
+    footer: {
+      textAlign: 'center',
+      fontSize: '13px',
+      color: '#9aa5b4',
+      marginTop: '16px',
+    },
+    footerLink: { color: '#1d6bdb', textDecoration: 'none', fontWeight: '500' },
+  }
+
   return (
     <div style={styles.container}>
-      <div style={styles.box}>
+      <button onClick={toggleTheme} style={styles.themeBtn} title={isDark ? 'Mode clair' : 'Mode sombre'}>
+        <ThemeToggleIcon size={18} color={theme.text2} />
+      </button>
 
+      <div style={styles.box}>
         <div style={styles.brand}>
           Dahlab<span style={styles.accent}>Connect</span>
         </div>
@@ -94,97 +202,9 @@ const Login = () => {
         <div style={styles.footer}>
           <Link to='/' style={styles.footerLink}>← Retour à l'accueil</Link>
         </div>
-
       </div>
     </div>
   )
-}
-
-const styles = {
-  container: {
-    minHeight: '100vh',
-    background: '#f5f7fa',
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-    fontFamily: 'sans-serif',
-    padding: '20px',
-  },
-  box: {
-    background: '#ffffff',
-    borderRadius: '16px',
-    padding: '40px',
-    width: '100%',
-    maxWidth: '420px',
-    border: '1px solid #e2e8f0',
-  },
-  brand: {
-    fontSize: '22px',
-    fontWeight: '800',
-    color: '#0f1b2d',
-    marginBottom: '24px',
-  },
-  accent: { color: '#0ea5a0' },
-  title: {
-    fontSize: '24px',
-    fontWeight: '700',
-    color: '#0f1b2d',
-    marginBottom: '4px',
-  },
-  subtitle: {
-    fontSize: '13px',
-    color: '#9aa5b4',
-    marginBottom: '28px',
-  },
-  error: {
-    background: '#fee2e2',
-    color: '#991b1b',
-    padding: '12px',
-    borderRadius: '8px',
-    fontSize: '13px',
-    marginBottom: '16px',
-  },
-  group: { marginBottom: '16px' },
-  label: {
-    display: 'block',
-    fontSize: '12px',
-    fontWeight: '600',
-    color: '#4a5568',
-    marginBottom: '6px',
-    textTransform: 'uppercase',
-    letterSpacing: '0.5px',
-  },
-  input: {
-    width: '100%',
-    padding: '11px 14px',
-    border: '1.5px solid #e2e8f0',
-    borderRadius: '8px',
-    fontSize: '14px',
-    fontFamily: 'sans-serif',
-    color: '#0f1b2d',
-    boxSizing: 'border-box',
-  },
-  btn: {
-    width: '100%',
-    padding: '12px',
-    background: '#1d6bdb',
-    color: '#ffffff',
-    border: 'none',
-    borderRadius: '8px',
-    fontSize: '14px',
-    fontWeight: '600',
-    cursor: 'pointer',
-    marginTop: '8px',
-    fontFamily: 'sans-serif',
-    transition: 'background 0.15s',
-  },
-  footer: {
-    textAlign: 'center',
-    fontSize: '13px',
-    color: '#9aa5b4',
-    marginTop: '16px',
-  },
-  footerLink: { color: '#1d6bdb', textDecoration: 'none', fontWeight: '500' },
 }
 
 export default Login
