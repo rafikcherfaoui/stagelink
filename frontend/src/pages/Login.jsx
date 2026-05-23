@@ -193,6 +193,12 @@ const Login = () => {
         </form>
 
         <div style={styles.footer}>
+            <Link to='/forgot-password' style={styles.footerLink}>
+               Mot de passe oublié ?
+            </Link>
+        </div>
+
+        <div style={styles.footer}>
           Vous êtes une entreprise ?{' '}
           <Link to='/login-company' style={styles.footerLink}>
             Connexion entreprise

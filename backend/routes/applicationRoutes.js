@@ -36,12 +36,12 @@ const applyToOffer = asyncHandler(async (req, res) => {
     status: 'pending'
   })
 
-  // Student can have maximum 5 pending applications at the same time.
+  // Student can have maximum 3 pending applications at the same time.
   // Once an application is accepted or rejected it no longer counts,
   // freeing up a slot for a new application.
-  if (applicationCount >= 5) {
+  if (applicationCount >= 3) {
     return res.status(400).json({
-      message: 'Limite atteinte — vous ne pouvez pas avoir plus de 5 candidatures en attente simultanément. Attendez une réponse pour pouvoir postuler à nouveau.'
+      message: 'Limite atteinte — vous ne pouvez pas avoir plus de 3 candidatures en attente simultanément. Attendez une réponse pour pouvoir postuler à nouveau.'
     })
   }
 

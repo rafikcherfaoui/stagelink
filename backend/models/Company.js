@@ -42,7 +42,19 @@ const companySchema = new mongoose.Schema({
   profilePicture: { type: String, default: '' },
   website:        { type: String, default: '' },
   linkedin:       { type: String, default: '' },
-  description:    { type: String, default: '' }
+  description:    { type: String, default: '' },
+  
+  // token sent by email when company requests a password reset
+  resetPasswordToken: {
+    type: String,
+    default: null
+  },
+
+  // expiry date — valid for 1 hour only
+  resetPasswordExpires: {
+    type: Date,
+    default: null
+  }
 
 }, {
   timestamps: true

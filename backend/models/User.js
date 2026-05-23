@@ -63,10 +63,23 @@ const userSchema = new mongoose.Schema({
 
   profilePicture: { type: String, default: '' },
   linkedin:       { type: String, default: '' },
-  github:         { type: String, default: '' }
+  github:         { type: String, default: '' },
+  
+  // token sent by email when user requests a password reset
+  resetPasswordToken: {
+    type: String,
+    default: null
+  },
+
+  // expiry date of the token — after this date the token is invalid
+  resetPasswordExpires: {
+    type: Date,
+    default: null
+  }
 
 }, {
   timestamps: true  // automatically adds createdAt and updatedAt fields
+  
 })
 
 module.exports = mongoose.model('User', userSchema)

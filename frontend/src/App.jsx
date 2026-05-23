@@ -29,6 +29,9 @@ import CompanyCandidates from './pages/company/Candidates'
 
 import PrivateRoute from './components/PrivateRoute'
 
+import ForgotPassword from './pages/ForgotPassword'
+import ResetPassword from './pages/ResetPassword'
+
 const App = () => {
   const { isDark } = useTheme()
 
@@ -113,6 +116,8 @@ const App = () => {
           <CompanyCandidates />
         </PrivateRoute>
       } />
+      <Route path='/forgot-password' element={<ForgotPassword />} />
+      <Route path='/reset-password' element={<ResetPassword />} />
 
     </Routes>
   )

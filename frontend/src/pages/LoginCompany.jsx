@@ -188,6 +188,11 @@ const LoginCompany = () => {
               onMouseLeave={e => e.currentTarget.style.background = '#1d6bdb'}>
               {loading ? 'Connexion...' : 'Se connecter →'}
             </button>
+            <div style={{ textAlign: 'center', marginTop: '12px' }}>
+                 <Link to='/forgot-password' style={{ color: '#1d6bdb', fontSize: '13px', textDecoration: 'none', fontWeight: '500' }}>
+                        Mot de passe oublié ?
+                 </Link>
+            </div>
           </form>
         ) : (
           <form onSubmit={handleRegister}>
