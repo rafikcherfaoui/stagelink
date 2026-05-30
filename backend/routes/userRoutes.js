@@ -182,8 +182,8 @@ const toggleBlockUser = asyncHandler(async (req, res) => {
 // @desc    Admin soft deletes a user
 // @access  Private — admin only
 // ────────────────────────────────────────────
+// APRÈS
 const deleteUser = asyncHandler(async (req, res) => {
-
   const user = await User.findById(req.params.id)
 
   if (!user) {
@@ -194,10 +194,9 @@ const deleteUser = asyncHandler(async (req, res) => {
     return res.status(400).json({ message: 'Impossible de supprimer un admin' })
   }
 
-  user.isActive = false
-  await user.save()
+  await user.deleteOne()      // ← vraie suppression
 
-  res.json({ message: 'Compte désactivé avec succès' })
+  res.json({ message: 'Compte supprimé avec succès' })
 })
 
 // ────────────────────────────────────────────

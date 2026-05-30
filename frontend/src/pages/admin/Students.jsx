@@ -52,12 +52,12 @@ const AdminStudents = () => {
     fetchStudents()
   }
 
-  const handleDelete = async (id) => {
-    if (!window.confirm('Confirmer la désactivation ?')) return
-    await axios.delete(`${import.meta.env.VITE_API_URL}/api/users/${id}`, { headers })
-    setMessage('Compte désactivé')
-    fetchStudents()
-  }
+const handleDelete = async (id) => {
+  if (!window.confirm('Confirmer la suppression ? Cette action est irréversible.')) return
+  await axios.delete(`${import.meta.env.VITE_API_URL}/api/users/${id}`, { headers })
+  setMessage('Compte supprimé avec succès')
+  fetchStudents()
+}
 
   const handleViewPassword = async (id) => {
     if (passwords[id] !== undefined) {
